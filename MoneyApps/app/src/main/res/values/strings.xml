@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MoneyApps</string>
+    <string name="home">Home</string>
+    <string name="table">Tables</string>
+    <string name="viz">Visualization</string>
+    <string name="map">Map</string>
+    <string name="settings">Settings</string>
+</resources>
