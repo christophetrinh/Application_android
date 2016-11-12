@@ -90,27 +90,27 @@ public class MainActivity extends ActionBarActivity {
                         case 0:
                             imageUrl = "http://www.skyscanner.fr/sites/default/files/image_import/fr/micro.jpg";
                             color = getResources().getColor(R.color.purple);
-                            newDrawable = getResources().getDrawable(R.drawable.ticket);
+                            newDrawable = getResources().getDrawable(R.drawable.home);
                             break;
                         case 1:
-                            imageUrl = "http://www.larousse.fr/encyclopedie/data/images/1311904-Balle_de_tennis_et_filet.jpg";
-                            color = getResources().getColor(R.color.orange);
-                            newDrawable = getResources().getDrawable(R.drawable.tennis);
+                            imageUrl = "http://infraiq.com/wp-content/uploads/2016/05/6.jpg";
+                            color = getResources().getColor(R.color.blue);
+                            newDrawable = getResources().getDrawable(R.drawable.table);
                             break;
                         case 2:
-                            imageUrl = "http://soocurious.com/fr/wp-content/uploads/2014/03/8-facettes-de-notre-cerveau-qui-ont-evolue-avec-la-technologie8.jpg";
+                            imageUrl = "http://etnosoft.net/wp-content/uploads/2014/11/consulting2.jpg";
                             color = getResources().getColor(R.color.cyan);
-                            newDrawable = getResources().getDrawable(R.drawable.light);
+                            newDrawable = getResources().getDrawable(R.drawable.charts);
                             break;
                         case 3:
                             imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
-                            color = getResources().getColor(R.color.green);
+                            color = getResources().getColor(R.color.orange);
                             newDrawable = getResources().getDrawable(R.drawable.earth);
                             break;
                         case 4:
-                            imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
+                            imageUrl = "http://www.skyscanner.fr/sites/default/files/image_import/fr/micro.jpg";//"http://hdreach.org/images/gearsHiRes.jpg";
                             color = getResources().getColor(R.color.green);
-                            newDrawable = getResources().getDrawable(R.drawable.earth);
+                            newDrawable = getResources().getDrawable(R.drawable.settings);
                             break;
                     }
 
