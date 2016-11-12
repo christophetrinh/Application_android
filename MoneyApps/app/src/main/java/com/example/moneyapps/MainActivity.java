@@ -13,10 +13,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
 
@@ -31,6 +33,24 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
+        actionA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //actionA.setTitle("Action A clicked");
+                Log.v("Button", "Clik on button A");
+            }
+        });
+
+        final FloatingActionButton actionB = (FloatingActionButton) findViewById(R.id.action_b);
+        actionB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //actionA.setTitle("Action B clicked");
+                Log.v("Button", "Clik on button B");
+            }
+        });
         //4 onglets
         final int tabCount = 5;
 
@@ -115,7 +135,7 @@ public class MainActivity extends ActionBarActivity {
                     }
 
                     //puis modifier les images/couleurs
-                    int fadeDuration = 400;
+                    int fadeDuration = 200;
                     materialViewPager.setColor(color, fadeDuration);
                     materialViewPager.setImageUrl(imageUrl, fadeDuration);
                     toggleLogo(newDrawable,color,fadeDuration);
