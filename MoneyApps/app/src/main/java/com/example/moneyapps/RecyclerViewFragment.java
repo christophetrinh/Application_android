@@ -46,10 +46,9 @@ public class RecyclerViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        //100 faux contenu
+        //1 faux contenu
         List<Object> mContentItems = new ArrayList<>();
-        for (int i = 0; i < 100; ++i)
-            mContentItems.add(new Object());
+        mContentItems.add(new Object());
 
         //penser à passer notre Adapter (ici : TestRecyclerViewAdapter) à un RecyclerViewMaterialAdapter
         mAdapter = new RecyclerViewMaterialAdapter(new TestRecyclerViewAdapter(mContentItems));

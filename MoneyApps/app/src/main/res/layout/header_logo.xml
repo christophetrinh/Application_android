@@ -10,6 +10,5 @@
         android:id="@+id/headerLogoContent"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        tools:src="@drawable/tennis"
         android:layout_gravity="center"/>
 </FrameLayout>

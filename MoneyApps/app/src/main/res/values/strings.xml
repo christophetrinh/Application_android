@@ -5,4 +5,15 @@
     <string name="viz">Visualization</string>
     <string name="map">Map</string>
     <string name="settings">Settings</string>
+
+    <string name="retail">Retail</string>
+    <string name="date">Date</string>
+    <string name="place">Place</string>
+    <string name="amount">Amount</string>
+    <string name="category">Category</string>
+    <string name="tag">Tag</string>
+
+    <string name="confirmButton">Save</string>
+    <string name="expense_saved_message">Expense saved</string>
+
 </resources>

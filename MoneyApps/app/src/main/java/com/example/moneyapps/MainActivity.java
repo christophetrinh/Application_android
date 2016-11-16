@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -17,22 +19,31 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
 
+import java.util.Arrays;
+
 public class MainActivity extends ActionBarActivity {
 
+    private static final int ACTIVITY_CREATE = 0;
     MaterialViewPager materialViewPager;
     View headerLogo;
     ImageView headerLogoContent;
+    private DataBaseAdapter mDbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //DATE BASE
+        mDbHelper = new DataBaseAdapter(this);
+        mDbHelper.open();
 
         final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
         actionA.setOnClickListener(new View.OnClickListener() {
@@ -40,6 +51,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View view) {
                 //actionA.setTitle("Action A clicked");
                 Log.v("Button", "Clik on button A");
+                debugDatabase();
             }
         });
 
@@ -47,10 +59,12 @@ public class MainActivity extends ActionBarActivity {
         actionB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //actionA.setTitle("Action B clicked");
+                //actionB.setTitle("Action B clicked");
                 Log.v("Button", "Clik on button B");
+                createForm();
             }
         });
+
         //4 onglets
         final int tabCount = 5;
 
@@ -93,6 +107,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             int oldItemPosition = -1;
+
             @Override
             public void setPrimaryItem(ViewGroup container, int position, Object object) {
                 super.setPrimaryItem(container, position, object);
@@ -138,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
                     int fadeDuration = 200;
                     materialViewPager.setColor(color, fadeDuration);
                     materialViewPager.setImageUrl(imageUrl, fadeDuration);
-                    toggleLogo(newDrawable,color,fadeDuration);
+                    toggleLogo(newDrawable, color, fadeDuration);
 
                 }
             }
@@ -150,7 +165,21 @@ public class MainActivity extends ActionBarActivity {
         this.materialViewPager.getPagerTitleStrip().setViewPager(this.materialViewPager.getViewPager());
     }
 
-    private void toggleLogo(final Drawable newLogo, final int newColor, int duration){
+    private void debugDatabase() {
+        Cursor expenseCursor = mDbHelper.fetchAllExpense();
+        if (expenseCursor != null) {
+            // Print
+            Log.v("DataBase Columns: ", Arrays.toString(expenseCursor.getColumnNames()));
+            Log.v("DataBase rows number:", String.valueOf(expenseCursor.getCount()));
+            expenseCursor.moveToFirst();
+            while (expenseCursor.moveToNext() != false) {
+                Log.v("DataBase retail:", String.valueOf(expenseCursor.getString(1)));
+                expenseCursor.moveToNext();
+            }
+        }
+    }
+
+    private void toggleLogo(final Drawable newLogo, final int newColor, int duration) {
 
         //animation de disparition
         final AnimatorSet animatorSetDisappear = new AnimatorSet();
@@ -189,4 +218,8 @@ public class MainActivity extends ActionBarActivity {
         animatorSetDisappear.start();
     }
 
+    private void createForm() {
+        Intent i = new Intent(this, ExpenseEdit.class);
+        startActivityForResult(i, ACTIVITY_CREATE);
+    }
 }
