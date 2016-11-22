@@ -30,4 +30,8 @@ dependencies {
         transitive = true
     }
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.android.support:support-v4:24.2.0'
+    compile 'com.google.android.gms:play-services-vision:9.4.0+'
+    compile 'com.android.support:design:24.2.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.4.0'
 }
