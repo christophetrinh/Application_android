@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View view) {
                 //actionA.setTitle("Action A clicked");
                 Log.v("Button", "Clik on button A");
-                debugDatabase();
+                takePicture();
             }
         });
 
@@ -62,6 +62,7 @@ public class MainActivity extends ActionBarActivity {
                 //actionB.setTitle("Action B clicked");
                 Log.v("Button", "Clik on button B");
                 createForm();
+                debugDatabase();
             }
         });
 
@@ -171,9 +172,17 @@ public class MainActivity extends ActionBarActivity {
             // Print
             Log.v("DataBase Columns: ", Arrays.toString(expenseCursor.getColumnNames()));
             Log.v("DataBase rows number:", String.valueOf(expenseCursor.getCount()));
+
             expenseCursor.moveToFirst();
-            while (expenseCursor.moveToNext() != false) {
-                Log.v("DataBase retail:", String.valueOf(expenseCursor.getString(1)));
+            while(!expenseCursor.isAfterLast()) {
+                // Print only retail
+                //Log.v("DataBase retail:", String.valueOf(expenseCursor.getString(expenseCursor.getColumnIndex("Retail"))));
+                // Print all
+                StringBuilder row = new StringBuilder();
+                for(int i = 0; i < expenseCursor.getColumnNames().length; i++){
+                    row.append(expenseCursor.getString(i)+" ");
+                }
+                Log.v("DataBase row:", row.toString());
                 expenseCursor.moveToNext();
             }
         }
@@ -220,6 +229,12 @@ public class MainActivity extends ActionBarActivity {
 
     private void createForm() {
         Intent i = new Intent(this, ExpenseEdit.class);
+        startActivityForResult(i, ACTIVITY_CREATE);
+    }
+
+
+    private void takePicture() {
+        Intent i = new Intent(this, TakePicture.class);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 }
