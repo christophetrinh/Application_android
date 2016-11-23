@@ -10,12 +10,12 @@
         app:viewpager_color="@color/colorPrimary"
         app:viewpager_enableToolbarElevation="true"
         app:viewpager_headerAlpha="0.6"
-        app:viewpager_headerHeight="200dp"
-        app:viewpager_hideLogoWithFade="true"
+        app:viewpager_headerHeight="150dp"
+        app:viewpager_hideLogoWithFade="false"
         app:viewpager_hideToolbarAndTitle="false"
         app:viewpager_logo="@layout/header_logo"
         app:viewpager_pagerTitleStrip="@layout/material_view_pager_pagertitlestrip_newstand"
-        app:viewpager_logoMarginTop="80dp"
+        app:viewpager_logoMarginTop="35dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

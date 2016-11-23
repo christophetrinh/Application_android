@@ -1,6 +1,7 @@
 package com.example.moneyapps;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +27,8 @@ public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_card, parent, false);
+
         return new RecyclerView.ViewHolder(view) {
         };
     }

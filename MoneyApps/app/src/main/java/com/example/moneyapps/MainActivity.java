@@ -20,12 +20,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import de.codecrafters.tableview.listeners.SwipeToRefreshListener;
+import de.codecrafters.tableview.listeners.TableDataClickListener;
+import de.codecrafters.tableview.listeners.TableDataLongClickListener;
+
+import com.example.moneyapps.data.Car;
+import com.example.moneyapps.data.DataFactory;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -41,10 +52,11 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //DATE BASE
+        // DATE BASE
         mDbHelper = new DataBaseAdapter(this);
         mDbHelper.open();
 
+        // BUTTON
         final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
         actionA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        //4 onglets
+        //5 onglets
         final int tabCount = 5;
 
         //les vues définies dans @layout/header_logo
@@ -79,10 +91,34 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public Fragment getItem(int position) {
+
+                switch (position) {
+                    case 0:
+                        TabFragment1 tab1 = new TabFragment1();
+                        return tab1;
+                    case 1:
+                        TabFragment1 tab2 = new TabFragment1();
+                        return tab2;
+                    case 2:
+                        TabFragment1 tab3 = new TabFragment1();
+                        return tab3;
+                    case 3:
+                        TabFragment1 tab4 = new TabFragment1();
+                        return tab4;
+                    case 4:
+                        TabFragment1 tab5 = new TabFragment1();
+                        return tab5;
+                    default:
+                        return null;
+                }
+            }
+            /*
+            @Override
+            public Fragment getItem(int position) {
                 //je créé pour chaque onglet un RecyclerViewFragment
                 return RecyclerViewFragment.newInstance();
             }
-
+            */
             @Override
             public int getCount() {
                 return tabCount;
@@ -165,7 +201,32 @@ public class MainActivity extends ActionBarActivity {
         //relie les tabs au viewpager
         this.materialViewPager.getPagerTitleStrip().setViewPager(this.materialViewPager.getViewPager());
     }
+    //TODO
+    private Car getRandomCar() {
+        final List<Car> carList = DataFactory.createCarList();
+        final int randomCarIndex = Math.abs(new Random().nextInt() % carList.size());
+        return carList.get(randomCarIndex);
+    }
 
+    private class CarClickListener implements TableDataClickListener<Car> {
+
+        @Override
+        public void onDataClicked(final int rowIndex, final Car clickedData) {
+            final String carString = "Click: " + clickedData.getProducer().getName() + " " + clickedData.getName();
+            Toast.makeText(MainActivity.this, carString, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class CarLongClickListener implements TableDataLongClickListener<Car> {
+
+        @Override
+        public boolean onDataLongClicked(final int rowIndex, final Car clickedData) {
+            final String carString = "Long Click: " + clickedData.getProducer().getName() + " " + clickedData.getName();
+            Toast.makeText(MainActivity.this, carString, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+    }
+     ///////// TODO
     private void debugDatabase() {
         Cursor expenseCursor = mDbHelper.fetchAllExpense();
         if (expenseCursor != null) {

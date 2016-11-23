@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
@@ -30,6 +31,7 @@ public class RecyclerViewFragment extends Fragment {
     public static RecyclerViewFragment newInstance() {
         return new RecyclerViewFragment();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,4 +59,5 @@ public class RecyclerViewFragment extends Fragment {
         //notifier le MaterialViewPager qu'on va utiliser une RecyclerView
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView);
     }
+
 }
