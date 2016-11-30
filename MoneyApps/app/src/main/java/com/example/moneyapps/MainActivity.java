@@ -12,30 +12,17 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
+import com.example.moneyapps.TabFragment.*;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.florent37.materialviewpager.MaterialViewPager;
-import com.github.florent37.materialviewpager.header.HeaderDesign;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import de.codecrafters.tableview.listeners.SwipeToRefreshListener;
-import de.codecrafters.tableview.listeners.TableDataClickListener;
-import de.codecrafters.tableview.listeners.TableDataLongClickListener;
-
-import com.example.moneyapps.data.Car;
-import com.example.moneyapps.data.DataFactory;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -45,7 +32,6 @@ public class MainActivity extends ActionBarActivity {
     View headerLogo;
     ImageView headerLogoContent;
     private DataBaseAdapter mDbHelper;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,19 +80,19 @@ public class MainActivity extends ActionBarActivity {
 
                 switch (position) {
                     case 0:
-                        TabFragment1 tab1 = new TabFragment1();
+                        TabHome tab1 = new TabHome();
                         return tab1;
                     case 1:
-                        TabFragment1 tab2 = new TabFragment1();
+                        TabTable tab2 = new TabTable(mDbHelper);
                         return tab2;
                     case 2:
-                        TabFragment1 tab3 = new TabFragment1();
+                        TabViz tab3 = new TabViz();
                         return tab3;
                     case 3:
-                        TabFragment1 tab4 = new TabFragment1();
+                        TabMap tab4 = new TabMap();
                         return tab4;
                     case 4:
-                        TabFragment1 tab5 = new TabFragment1();
+                        TabSettings tab5 = new TabSettings();
                         return tab5;
                     default:
                         return null;
@@ -196,37 +182,13 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+
         //permet au viewPager de garder 4 pages en mémoire (à ne pas utiliser sur plus de 4 pages !)
         this.materialViewPager.getViewPager().setOffscreenPageLimit(tabCount);
         //relie les tabs au viewpager
         this.materialViewPager.getPagerTitleStrip().setViewPager(this.materialViewPager.getViewPager());
     }
-    //TODO
-    private Car getRandomCar() {
-        final List<Car> carList = DataFactory.createCarList();
-        final int randomCarIndex = Math.abs(new Random().nextInt() % carList.size());
-        return carList.get(randomCarIndex);
-    }
 
-    private class CarClickListener implements TableDataClickListener<Car> {
-
-        @Override
-        public void onDataClicked(final int rowIndex, final Car clickedData) {
-            final String carString = "Click: " + clickedData.getProducer().getName() + " " + clickedData.getName();
-            Toast.makeText(MainActivity.this, carString, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private class CarLongClickListener implements TableDataLongClickListener<Car> {
-
-        @Override
-        public boolean onDataLongClicked(final int rowIndex, final Car clickedData) {
-            final String carString = "Long Click: " + clickedData.getProducer().getName() + " " + clickedData.getName();
-            Toast.makeText(MainActivity.this, carString, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-    }
-     ///////// TODO
     private void debugDatabase() {
         Cursor expenseCursor = mDbHelper.fetchAllExpense();
         if (expenseCursor != null) {

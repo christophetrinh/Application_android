@@ -17,10 +17,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.text.ParseException;
 import java.util.Date;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by mario on 15/11/2016.
@@ -61,6 +60,15 @@ public class ExpenseEdit extends Activity {
         mConfirmButton = (Button) findViewById(R.id.confirm);
         mCalendar = Calendar.getInstance();
         registerButtonListenersAndSetDefaultText();
+
+        // Long Click Table:
+        //TODO ADD KRISS PART
+        String extra = getIntent().getStringExtra(DataBaseAdapter.KEY_ROWID);
+        if (extra != null) {
+            Log.v("id press :", extra);
+            mRowId = Long.valueOf(extra);
+            populateFieldsFromLongPress();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -95,16 +103,15 @@ public class ExpenseEdit extends Activity {
         String expenseDate = dateFormat.format(mCalendar.getTime());
         if (mRowId == null) {
             mDbHelper.open();
-            long id = mDbHelper.createExpense( retail, expenseDate,  place,  amount,  category,  tag);
+            long id = mDbHelper.createExpense(retail, expenseDate, place, amount, category, tag);
             mDbHelper.close();
             if (id > 0) {
                 mRowId = id;
                 Log.v("DataBase ID:", String.valueOf(id));
-
             }
         } else {
             mDbHelper.open();
-            mDbHelper.updateExpense( mRowId,  retail, expenseDate,  place,  amount,  category,  tag);
+            mDbHelper.updateExpense(mRowId, retail, expenseDate, place, amount, category, tag);
             mDbHelper.close();
         }
     }
@@ -120,6 +127,16 @@ public class ExpenseEdit extends Activity {
     public void showDatePickerDialog(View v) {
         dateFragment = new DatePickerFragment();
         dateFragment.show(getFragmentManager(), "datePicker");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
 
@@ -147,6 +164,7 @@ public class ExpenseEdit extends Activity {
     private void setRowIdFromIntent() {
         if (mRowId == null) {
             Bundle extras = getIntent().getExtras();
+            Log.v("Row id press :", String.valueOf(extras.getLong(DataBaseAdapter.KEY_ROWID)));
             mRowId = extras != null ? extras.getLong(DataBaseAdapter.KEY_ROWID) : null;
         }
     }
@@ -160,12 +178,10 @@ public class ExpenseEdit extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        setRowIdFromIntent();
-        populateFields();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void populateFields() {
+    private void populateFieldsFromLongPress() {
         if (mRowId != null) {
             mDbHelper.open();
             Cursor expense = mDbHelper.fetchExpense(mRowId);

@@ -29,17 +29,4 @@
     <string name="ocr_failure">No text captured</string>
     <string name="ocr_error">"Error reading text: %1$s"</string>
 
-<!--
-        RELATIVE TO TABLE CAR
--->
-    <string name="default_text_ps">180PS</string>
-    <string name="separator">/</string>
-    <string name="default_text_kws">120kW</string>
-    <string name="car_producer_image_content_description">Car Producer</string>
-    <string name="kw">kW</string>
-    <string name="ps">PS</string>
-    <string name="brand">Brand</string>
-    <string name="model">Model</string>
-    <string name="power">Power</string>
-    <string name="price">Price</string>
 </resources>

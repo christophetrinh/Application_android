@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 /**
  * Created by mario on 15/11/2016.
@@ -73,12 +74,31 @@ public class DataBaseAdapter {
 
     public long createExpense(String retail, String date, String place, String amount, String category, String tag) {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_RETAIL, retail);
-        initialValues.put(KEY_DATE, date);
-        initialValues.put(KEY_PLACE, place);
-        initialValues.put(KEY_AMOUNT, amount);
-        initialValues.put(KEY_CATOGORY, category);
-        initialValues.put(KEY_TAG, tag);
+        if (retail.isEmpty()){
+            initialValues.put(KEY_RETAIL, "empty");}
+        else
+            initialValues.put(KEY_RETAIL, retail);
+        if (date.isEmpty())
+            initialValues.put(KEY_DATE, "empty");
+        else
+            initialValues.put(KEY_DATE, date);
+        if (place.isEmpty())
+            initialValues.put(KEY_PLACE, "empty");
+        else
+            initialValues.put(KEY_PLACE, place);
+        if (amount.isEmpty())
+            initialValues.put(KEY_AMOUNT, "0");
+        else
+            initialValues.put(KEY_AMOUNT, amount);
+        if (category.isEmpty())
+            initialValues.put(KEY_CATOGORY, "empty");
+        else
+            initialValues.put(KEY_CATOGORY, category);
+        if (tag.isEmpty())
+            initialValues.put(KEY_TAG, "empty");
+        else
+            initialValues.put(KEY_TAG, tag);
+
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
 
@@ -88,14 +108,29 @@ public class DataBaseAdapter {
 
     public Cursor fetchAllExpense() {
         //query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
-        return mDb.query(DATABASE_TABLE, new String[]{ KEY_ROWID, KEY_RETAIL, KEY_DATE, KEY_PLACE, KEY_AMOUNT,
-                KEY_CATOGORY, KEY_TAG}, null, null, null, null, null);
+        return mDb.query(
+                DATABASE_TABLE, // The table to query
+                new String[]{ KEY_ROWID, KEY_RETAIL, KEY_DATE, KEY_PLACE, KEY_AMOUNT, KEY_CATOGORY, KEY_TAG},   // The columns to return
+                null,   // The columns for the WHERE clause
+                null,   // The values for the WHERE clause
+                null,   // don't group the rows
+                null,   // don't filter by row groups
+                null);  // The sort order
     }
 
     public Cursor fetchExpense(long rowId) throws SQLException {
         //query(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit)
-        Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[]{KEY_ROWID, KEY_RETAIL, KEY_DATE, KEY_PLACE, KEY_AMOUNT,
-                KEY_CATOGORY, KEY_TAG}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
+        Cursor mCursor = mDb.query(
+                true,
+                DATABASE_TABLE,
+                new String[]{KEY_ROWID, KEY_RETAIL, KEY_DATE, KEY_PLACE, KEY_AMOUNT, KEY_CATOGORY, KEY_TAG},
+                KEY_ROWID + "=" + rowId,
+                null,
+                null,
+                null,
+                null,
+                null);
+
         if (mCursor != null) {
             mCursor.moveToFirst();
         }

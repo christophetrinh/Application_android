@@ -5,11 +5,11 @@
                 android:layout_height="match_parent"
                 tools:context="com.example.moneyapps.MainActivity">
 
-    <com.example.moneyapps.SortableCarTableView
+    <com.example.moneyapps.SortableExpenseTableView
         android:id="@+id/tableView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        custom:tableView_columnCount="4"
+        custom:tableView_columnCount="6"
         custom:tableView_headerColor="@color/primary"
         android:layout_marginTop="209dp"
         android:layout_alignParentRight="true"
