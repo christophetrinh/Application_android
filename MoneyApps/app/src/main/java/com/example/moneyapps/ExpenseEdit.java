@@ -18,7 +18,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import static android.R.attr.defaultValue;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -63,16 +62,13 @@ public class ExpenseEdit extends Activity {
         registerButtonListenersAndSetDefaultText();
 
         // Long Click Table:
+        //TODO ADD KRISS PART
         String extra = getIntent().getStringExtra(DataBaseAdapter.KEY_ROWID);
         if (extra != null) {
             Log.v("id press :", extra);
             mRowId = Long.valueOf(extra);
             populateFieldsFromLongPress();
         }
-        // Set text form TakePicture
-        String amount = getIntent().getStringExtra("amount");
-        String full_date = getIntent().getStringExtra("date");
-        populateFieldsFromCamera(amount,full_date);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -214,21 +210,11 @@ public class ExpenseEdit extends Activity {
         updateDateButtonText();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void populateFieldsFromCamera(String value, String date) {
-        //TODO ajouter la location dedans
-        if (value!=null && !value.isEmpty()) mAmountText.setText(String.valueOf(value));
-        if (date!=null && !date.isEmpty()) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-            Date date_format;
-            try {
-                date_format = dateFormat.parse(date);
-                Log.e("VALUE", "LA VALEUR DANS FONCTION POP FIELDS EST: " + date_format);
-                mCalendar.setTime(date_format);
-                updateDateButtonText();
-            } catch (ParseException e) {
-                Log.e("ExpenseEdit", e.getMessage(), e);
-            }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mRowId != null) {
+            outState.putLong(DataBaseAdapter.KEY_ROWID, mRowId);
         }
     }
 }

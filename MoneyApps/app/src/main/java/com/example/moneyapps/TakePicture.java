@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +21,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.moneyapps.ui.camera.CameraSourcePreview;
@@ -45,8 +40,6 @@ import java.util.Locale;
 
 public class TakePicture extends AppCompatActivity{ private static final String TAG = "OcrCaptureActivity";
 
-
-    private static final int ACTIVITY_CREATE = 0;
     // Intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
 
@@ -66,9 +59,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
-    private String lastValidAmount;
-    private String lastValidDate;
-
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -81,13 +71,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
 
-        Button myButton = new Button(this);
-        myButton.findViewById(R.id.button_capture);
-
-
-
-
-        Toast.makeText(this, R.string.present_ticket, Toast.LENGTH_LONG).show();
         // Set good defaults for capturing text.
         boolean autoFocus = true;
         boolean useFlash = false;
@@ -101,21 +84,9 @@ public class TakePicture extends AppCompatActivity{ private static final String 
             requestCameraPermission();
         }
 
-
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
-
     }
-
-    public void updateData(String amount) {
-        lastValidAmount = amount;
-        Log.e("Amount received", "Value = "+lastValidAmount);
-    }
-    public void updateDate(String date) {
-        lastValidDate = date;
-        Log.e("Date received", "Date = "+lastValidDate);
-    }
-
 
     /**
      * Handles the requesting of the camera permission.  This includes
@@ -175,7 +146,7 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         // graphics for each text block on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each text block.
         TextRecognizer textRecognizer = new TextRecognizer.Builder(context).build();
-        textRecognizer.setProcessor(new OcrDetectorProcessor(mGraphicOverlay, this));
+        textRecognizer.setProcessor(new OcrDetectorProcessor(mGraphicOverlay));
 
         if (!textRecognizer.isOperational()) {
             // Note: The first time that an app using a Vision API is installed on a
@@ -346,22 +317,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         return text != null;
     }
 
-    public void newForm(View view) {
-        Intent i = new Intent(this, ExpenseEdit.class);
-        String location = getLocation();
-
-        i.putExtra("amount", lastValidAmount);
-        i.putExtra("date",lastValidDate);
-        i.putExtra("location", location);
-
-        startActivityForResult(i, ACTIVITY_CREATE);
-    }
-
-    private String getLocation() {
-        // TODO FINIR LOCATION AUTO
-        return "Renens";
-    }
-
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
@@ -425,7 +380,5 @@ public class TakePicture extends AppCompatActivity{ private static final String 
             }
         }
     }
-
-
 }
 

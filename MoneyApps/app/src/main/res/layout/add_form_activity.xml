@@ -16,8 +16,6 @@
 
         <EditText
             android:id="@+id/retail"
-            android:maxLines="1"
-            android:imeOptions="actionNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -28,10 +26,8 @@
 
         <EditText
             android:id="@+id/place"
-            android:imeOptions="actionNext"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -40,8 +36,6 @@
 
         <EditText
             android:id="@+id/amount"
-            android:maxLines="1"
-            android:imeOptions="actionNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -52,8 +46,6 @@
 
         <EditText
             android:id="@+id/category"
-            android:maxLines="1"
-            android:imeOptions="actionNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -64,10 +56,9 @@
 
         <EditText
             android:id="@+id/tag"
-            android:maxLines="1"
-            android:imeOptions="actionNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
 
         <TextView
             android:layout_width="wrap_content"

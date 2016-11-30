@@ -1,7 +1,5 @@
 package com.example.moneyapps;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
@@ -18,14 +16,10 @@ import com.google.android.gms.vision.text.TextBlock;
 
 public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
 
-    private final Activity mActivity;
     private GraphicOverlay<OcrGraphic> mGraphicOverlay;
-    private boolean Detected;
-    private boolean Detected_date;
-    private boolean Detected_amount;
-    OcrDetectorProcessor(GraphicOverlay<OcrGraphic> ocrGraphicOverlay, Activity activity) {
+
+    OcrDetectorProcessor(GraphicOverlay<OcrGraphic> ocrGraphicOverlay) {
         mGraphicOverlay = ocrGraphicOverlay;
-        mActivity = activity;
     }
 
     /**
@@ -39,9 +33,6 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
         mGraphicOverlay.clear();
-        Detected = false;
-        Detected_amount = false;
-        Detected_date = false;
         String raw = new String();
         SparseArray<TextBlock> items = detections.getDetectedItems();
         for (int i = 0; i < items.size(); ++i) {
@@ -52,6 +43,7 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
                 Log.d("OcrDetectorProcessor", "RAW TEXT: " + item.getValue());
             }
 */
+
             //PRICE
             if (item != null && item.getValue() != null) {
                 raw = item.getValue();
@@ -59,74 +51,37 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
                 String value = new String();
 
                 if (raw.contains("CHF")) {
-                    OcrGraphic graphic = new OcrGraphic(mGraphicOverlay, item);
-                    mGraphicOverlay.add(graphic);
                     for (int j = 0; j < token.length; j++) {
-                        if (isNumeric(token[j])) {
+                        if (isNumeric(token[j]))
                             value = token[j];
-                            Detected_amount = true;
-                            final String amount = value;
-                            mActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ((TakePicture) mActivity).updateData(amount);
-                                }
-                            });
-                        }
-                        if (!value.isEmpty()) Log.d("Processor", "Suisse: " + value);
                     }
+                    Log.d("Processor", "Suisse: " + value);
                 }
                 else if (raw.contains("EUR")) {
-                    OcrGraphic graphic = new OcrGraphic(mGraphicOverlay, item);
-                    mGraphicOverlay.add(graphic);
                     for (int j = 0; j < token.length; j++) {
-                        if (isNumeric(token[j])){
+                        if (isNumeric(token[j]))
                             value = token[j];
-                            Detected_amount = true;
-                            final String amount = value;
-                            mActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ((TakePicture) mActivity).updateData(amount);
-                                }
-                            });
-                        }
-
                     }
-                    if (!value.isEmpty()) Log.d("Processor", "Europe: " + value);
+                    Log.d("Processor", "Europe: " + value);
                 }
             }
 
 
-            String date_value;
             //DATE & TIME
             if (item != null && item.getValue().contains("/")) {
                 raw = item.getValue();
                 String[] token = raw.split(" ");
                 for (int j = 0; j < token.length; j++) {
-                    if (isDate(token[j])){
-                        OcrGraphic graphic = new OcrGraphic(mGraphicOverlay, item);
-                        mGraphicOverlay.add(graphic);
+                    if (isDate(token[j]))
                         Log.d("OcrDetectorProcessor", "DATE: " + token[j]);
-                        date_value = token[j];
-                        Detected_date = true;
-                        final String date = date_value;
-                        mActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((TakePicture) mActivity).updateDate(date);
-                            }
-                        });
-
-                    }
-                    //if (isTime(token[j]))
-                        //Log.d("OcrDetectorProcessor", "TIME: " + token[j]);
+                    if (isTime(token[j]))
+                        Log.d("OcrDetectorProcessor", "TIME: " + token[j]);
                 }
                 //Log.d("OcrDetectorProcessor", "DATE: " + item.getValue());
             }
+            OcrGraphic graphic = new OcrGraphic(mGraphicOverlay, item);
+            mGraphicOverlay.add(graphic);
         }
-
-
     }
     public static boolean isTime(String str) {
         return str.matches("([0-9]{2}):([0-9]{2})");
@@ -148,8 +103,6 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
      */
     @Override
     public void release() {
-        Log.v("CLEAN","clean the screen");
         mGraphicOverlay.clear();
-
     }
 }
