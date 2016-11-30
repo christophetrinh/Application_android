@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,13 +11,33 @@
     <com.example.moneyapps.ui.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.example.moneyapps.ui.camera.GraphicOverlay
-            android:id="@+id/graphicOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        >
 
     </com.example.moneyapps.ui.camera.CameraSourcePreview>
 
-</LinearLayout>
+
+
+    <com.example.moneyapps.ui.camera.GraphicOverlay
+        android:id="@+id/graphicOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+    <Button
+        android:id="@+id/button_capture"
+        android:text="Capture done"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="195dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="newForm"
+        />
+
+
+
+
+
+</RelativeLayout>

@@ -288,14 +288,16 @@ public class MainActivity extends ActionBarActivity {
         animatorSetDisappear.start();
     }
 
+
     private void createForm() {
         Intent i = new Intent(this, ExpenseEdit.class);
+
         startActivityForResult(i, ACTIVITY_CREATE);
     }
-
 
     private void takePicture() {
         Intent i = new Intent(this, TakePicture.class);
         startActivityForResult(i, ACTIVITY_CREATE);
+
     }
 }

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.text.ParseException;
 import java.util.Date;
 
+import static android.R.attr.defaultValue;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -61,6 +62,37 @@ public class ExpenseEdit extends Activity {
         mConfirmButton = (Button) findViewById(R.id.confirm);
         mCalendar = Calendar.getInstance();
         registerButtonListenersAndSetDefaultText();
+
+
+        String amount = getIntent().getStringExtra("amount");
+        if (amount!=null) if (!amount.isEmpty()) mAmountText.setText(String.valueOf(amount));
+        String full_date = getIntent().getStringExtra("date");
+        if (full_date!=null) if (!full_date.isEmpty()) {
+            String[] date_parsed = full_date.split("/");
+            String date = date_parsed[0];
+            String month = date_parsed[1];
+            String year = date_parsed[2];;
+            Log.e("VALEUR RECU","Value of year:" + String.valueOf(year) +"Value of month: "+String.valueOf(month) + "Value of date: " + String.valueOf(date));
+            //mCalendar.set(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(date));
+            mCalendar.set(1900,10,2);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+            String dateForButton = dateFormat.format(20000000);
+            mDateButton.setText(dateForButton);
+            //mCalendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date));
+            //mCalendar.set(Calendar.MONTH, 2);
+            //mCalendar.set(Calendar.YEAR, 2000);
+
+            //SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FINAL_FORMAT);
+            //Date update_date(1900,);
+
+        }
+
+
+
+
+
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -90,6 +122,8 @@ public class ExpenseEdit extends Activity {
         String amount = mAmountText.getText().toString();
         String category = mCategoryText.getText().toString();
         String tag = mTagText.getText().toString();
+
+        Log.v("VALUE",amount);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FINAL_FORMAT);
         String expenseDate = dateFormat.format(mCalendar.getTime());
@@ -161,7 +195,7 @@ public class ExpenseEdit extends Activity {
     protected void onResume() {
         super.onResume();
         setRowIdFromIntent();
-        populateFields();
+        //populateFields();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
