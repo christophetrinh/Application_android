@@ -65,35 +65,12 @@ public class ExpenseEdit extends Activity {
 
 
         String amount = getIntent().getStringExtra("amount");
-        if (amount!=null) if (!amount.isEmpty()) mAmountText.setText(String.valueOf(amount));
         String full_date = getIntent().getStringExtra("date");
-        if (full_date!=null) if (!full_date.isEmpty()) {
-            String[] date_parsed = full_date.split("/");
-            String date = date_parsed[0];
-            String month = date_parsed[1];
-            String year = date_parsed[2];;
-            Log.e("VALEUR RECU","Value of year:" + String.valueOf(year) +"Value of month: "+String.valueOf(month) + "Value of date: " + String.valueOf(date));
-            //mCalendar.set(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(date));
-            mCalendar.set(1900,10,2);
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-            String dateForButton = dateFormat.format(20000000);
-            mDateButton.setText(dateForButton);
-            //mCalendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date));
-            //mCalendar.set(Calendar.MONTH, 2);
-            //mCalendar.set(Calendar.YEAR, 2000);
-
-            //SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FINAL_FORMAT);
-            //Date update_date(1900,);
-
-        }
-
-
-
-
-
-
+        populateFieldsFromCamera(amount,full_date);
     }
+
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void registerButtonListenersAndSetDefaultText() {
@@ -226,6 +203,24 @@ public class ExpenseEdit extends Activity {
             mDbHelper.close();
         }
         updateDateButtonText();
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void populateFieldsFromCamera(String value, String date) { //TODO ajouter la location dedans
+        if (value!=null && !value.isEmpty()) mAmountText.setText(String.valueOf(value));
+        if (date!=null && !date.isEmpty()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FINAL_FORMAT);
+            Date date_format;
+            try {
+                date_format = dateFormat.parse(date);
+                Log.e("VALUE","LA VALEUR DANS FONCTION POP FIELDS EST"+date_format);
+                mCalendar.setTime(date_format);
+            } catch (ParseException e) {
+                Log.e("ExpenseEdit", e.getMessage(), e);
+            }
+        }
+
     }
 
     @Override
