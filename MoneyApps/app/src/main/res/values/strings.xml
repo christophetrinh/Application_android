@@ -13,6 +13,7 @@
     <string name="category">Category</string>
     <string name="tag">Tag</string>
 
+    <string name="present_ticket">Please present a ticket</string>
     <string name="confirmButton">Save</string>
     <string name="expense_saved_message">Expense saved</string>
 
