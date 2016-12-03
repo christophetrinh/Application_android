@@ -348,19 +348,13 @@ public class TakePicture extends AppCompatActivity{ private static final String 
 
     public void newForm(View view) {
         Intent i = new Intent(this, ExpenseEdit.class);
-        String location = getLocation();
-
+        i.putExtra("take_picture", true);
         i.putExtra("amount", lastValidAmount);
         i.putExtra("date",lastValidDate);
-        i.putExtra("location", location);
 
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
-    private String getLocation() {
-        // TODO FINIR LOCATION AUTO
-        return "Renens";
-    }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
 
