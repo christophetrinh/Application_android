@@ -1,26 +1,41 @@
 package com.example.moneyapps;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.app.DialogFragment;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.R.attr.defaultValue;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by mario on 15/11/2016.
@@ -44,6 +59,7 @@ public class ExpenseEdit extends Activity {
     public Long mRowId;
 
     private Button mConfirmButton;
+    private LocationManager locationManager;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +86,13 @@ public class ExpenseEdit extends Activity {
             populateFieldsFromLongPress();
         }
         // Set text form TakePicture
-        String amount = getIntent().getStringExtra("amount");
-        String full_date = getIntent().getStringExtra("date");
-        populateFieldsFromCamera(amount,full_date);
+        Boolean bool_take_picture;
+        bool_take_picture = getIntent().getBooleanExtra("take_picture",false);
+        if (bool_take_picture) {
+            String amount = getIntent().getStringExtra("amount");
+            String full_date = getIntent().getStringExtra("date");
+            populateFieldsFromCamera(amount,full_date);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -216,9 +236,12 @@ public class ExpenseEdit extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void populateFieldsFromCamera(String value, String date) {
-        //TODO ajouter la location dedans
-        if (value!=null && !value.isEmpty()) mAmountText.setText(String.valueOf(value));
-        if (date!=null && !date.isEmpty()) {
+        String complete_address;
+        complete_address = getLocationBestProvider();
+        mPlaceText.setText(complete_address);
+
+        if (value != null && !value.isEmpty()) mAmountText.setText(String.valueOf(value));
+        if (date != null && !date.isEmpty()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
             Date date_format;
             try {
@@ -231,4 +254,92 @@ public class ExpenseEdit extends Activity {
             }
         }
     }
+
+    private String getLocation() {
+        String address = new String();
+        String context = Context.LOCATION_SERVICE;
+        locationManager = (LocationManager) getSystemService(context);
+        List<String> providers = locationManager.getProviders(true);
+        for(String provider: providers) {
+            locationManager.requestLocationUpdates(provider, 1000, 0, new
+                    LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                        }
+
+                        @Override
+                        public void onStatusChanged(String provider, int status, Bundle
+                                extras) {
+                        }
+
+                        @Override
+                        public void onProviderEnabled(String provider) {
+                        }
+
+                        @Override
+                        public void onProviderDisabled(String provider) {
+                        }
+                    });
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(provider);
+                if (location != null) {
+                    address = updateWithNewLocation(location);
+                }
+            }
+        }
+        return address;
+    }
+
+
+    private String getLocationBestProvider(){
+        String full_address = new String();
+        LocationManager locationManager;
+        String context = Context.LOCATION_SERVICE;
+        locationManager = (LocationManager) getSystemService(context);Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        String provider = locationManager.getBestProvider(criteria, true);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(provider);
+            if (location != null) {
+                full_address = updateWithNewLocation(location);
+            }
+        }
+        return full_address;
+    }
+
+
+    private String updateWithNewLocation(Location location) {
+        String addressString = "No address found";
+        if(location != null){
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            //TODO AJOUTER LA LOCALISATION DANS LA DATASET
+
+            Geocoder gc = new Geocoder(this, Locale.getDefault());
+            try {
+                List<Address> addresses = gc.getFromLocation(latitude, longitude,
+                        1);
+                StringBuilder sb = new StringBuilder();
+                if (addresses.size() > 0) {
+                    Address address = addresses.get(0);
+                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                        sb.append("\n").append(address.getAddressLine(i));
+                    }
+                    addressString = sb.toString();
+                }
+            } catch (IOException e){}
+        }
+        return addressString;
+    }
+
+
+
 }
