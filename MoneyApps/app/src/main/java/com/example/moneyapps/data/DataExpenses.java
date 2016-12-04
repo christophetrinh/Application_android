@@ -24,11 +24,13 @@ public final class DataExpenses {
         Expense a = new Expense("1","Auchan", "12/10/16", "Grenoble", "Alimentation", "Etude", 10);
         Expense b = new Expense("2","Lidl", "07/10/16", "Lausanne", "Alimentation", "Etude", 500);
         Expense c = new Expense("3","Mobilis", "02/10/16", "Geneve", "Transport", "Echange", 1000);
+        Expense d = new Expense("4","Mobilis", "02/10/16", "Geneve", "Transport", "Echange", 1000);
 
         final List<Expense> Expenses = new ArrayList<>();
         Expenses.add(a);
         Expenses.add(b);
         Expenses.add(c);
+        Expenses.add(d);
 
         return Expenses;
     }

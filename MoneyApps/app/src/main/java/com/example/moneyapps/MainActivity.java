@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
                         TabViz tab3 = new TabViz();
                         return tab3;
                     case 3:
-                        TabMap tab4 = new TabMap();
+                        TabMap tab4 = new TabMap(mDbHelper);
                         return tab4;
                     case 4:
                         TabSettings tab5 = new TabSettings();

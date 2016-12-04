@@ -81,10 +81,11 @@ public class ExpenseEdit extends Activity {
         // Long Click Table:
         String extra = getIntent().getStringExtra(DataBaseAdapter.KEY_ROWID);
         if (extra != null) {
-            // TODO ADD REMOVE BUTTON AND LINK WITH DATABASE
             Log.v("id press :", extra);
             mRowId = Long.valueOf(extra);
             populateFieldsFromLongPress();
+            // TODO ADD REMOVE BUTTON AND LINK WITH DATABASE
+            // if rmv : deleteExpense(mRowId)
         }
         // Set text form TakePicture
         Boolean bool_take_picture;

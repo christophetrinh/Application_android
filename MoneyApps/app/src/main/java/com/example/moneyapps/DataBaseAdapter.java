@@ -118,6 +118,27 @@ public class DataBaseAdapter {
                 null);  // The sort order
     }
 
+    public Cursor groupbyPlace() {
+        /*
+        SELECT
+                KEY_PLACE,
+        SUM(KEY_AMOUNT)
+        FROM
+                DATABASE_TABLE
+        GROUP BY
+        KEY_PLACE;
+        */
+        // Expanded version:
+        return mDb.query(
+                DATABASE_TABLE, // The table to query
+                new String[]{KEY_PLACE,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                null,   // The columns for the WHERE clause
+                null,   // The values for the WHERE clause
+                KEY_PLACE,   // don't group the rows
+                null,   // don't filter by row groups
+                null);  // The sort order
+    }
+
     public Cursor fetchExpense(long rowId) throws SQLException {
         //query(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit)
         Cursor mCursor = mDb.query(
