@@ -35,6 +35,5 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
     compile 'com.google.android.gms:play-services-appindexing:9.4.0'
     compile 'de.codecrafters.tableview:tableview:2.4.1'
-    //compile project(':tableview')
-    //compile 'com.example.moneyapps:tableview'
+    compile 'com.google.android.gms:play-services-maps:9.4.0'
 }
