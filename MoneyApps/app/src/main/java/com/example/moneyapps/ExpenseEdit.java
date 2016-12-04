@@ -323,8 +323,6 @@ public class ExpenseEdit extends Activity {
         if(location != null){
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
-            //TODO AJOUTER LA LOCALISATION DANS LA DATASET
-
             Geocoder gc = new Geocoder(this, Locale.getDefault());
             try {
                 List<Address> addresses = gc.getFromLocation(latitude, longitude,

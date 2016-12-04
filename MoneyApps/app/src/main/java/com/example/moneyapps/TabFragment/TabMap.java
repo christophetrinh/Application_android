@@ -143,12 +143,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
     private void setUpMap(GoogleMap map) {
         mMap = map;
 
-        // Add a marker in Sydney, Australia, and move the camera.
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,13));
-
-        //Circle
+        //Circle example
         // Instantiates a new CircleOptions object and defines the center and radius
 /*
         LatLng circle_coord = new LatLng(37.4, -122.1);
@@ -172,7 +167,9 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
             //System.out.println(PlaceAmount.get(i).getPlace());
             // TODO ADD Circle
             // TODO UPDATE MAP WHEN CLICK ON MAP TAB (Resume)
-            geocodeAddress(PlaceAmount.get(i).getPlace(),PlaceAmount.get(i).getAmount(), geocode, mMap);
+            if (!PlaceAmount.get(i).getPlace().equals("empty")) {
+                geocodeAddress(PlaceAmount.get(i).getPlace(), PlaceAmount.get(i).getAmount(), geocode, mMap);
+            }
         }
     }
 
