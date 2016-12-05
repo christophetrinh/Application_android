@@ -77,7 +77,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
         setUpMap(googleMap);
     }
 
-    public static List<ExpenseMap> ExtractFromDataBase (DataBaseAdapter mDb) {
+    public static List<ExpenseMap> ExtractFromDataBase(DataBaseAdapter mDb) {
         // Groupby place and sum amount
         // Return array list of class ExpenseMap
         final List<ExpenseMap> PlaceAmount = new ArrayList<>();
@@ -85,7 +85,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
         debugDatabase(dataCursor); // Print result
         if (dataCursor != null) {
             dataCursor.moveToFirst();
-            while(!dataCursor.isAfterLast()) {
+            while (!dataCursor.isAfterLast()) {
 
                 PlaceAmount.add(new ExpenseMap(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))),
                         Double.parseDouble(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))))));
@@ -101,13 +101,13 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
         private String place;
         private double amount;
 
-        public ExpenseMap( String place, double amount) {
+        public ExpenseMap(String place, double amount) {
             this.place = place;
             this.amount = amount;
         }
 
-        public String toString(){
-            return "Place : " + place + ", Amount : " + amount+ "\n";
+        public String toString() {
+            return "Place : " + place + ", Amount : " + amount + "\n";
         }
 
         public String getPlace() {
@@ -126,13 +126,13 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
             Log.v("DataBase rows number:", String.valueOf(dataCursor.getCount()));
 
             dataCursor.moveToFirst();
-            while(!dataCursor.isAfterLast()) {
+            while (!dataCursor.isAfterLast()) {
                 // Print only retail
                 //Log.v("DataBase retail:", String.valueOf(expenseCursor.getString(expenseCursor.getColumnIndex("Retail"))));
                 // Print all
                 StringBuilder row = new StringBuilder();
-                for(int i = 0; i < dataCursor.getColumnNames().length; i++){
-                    row.append(dataCursor.getString(i)+" ");
+                for (int i = 0; i < dataCursor.getColumnNames().length; i++) {
+                    row.append(dataCursor.getString(i) + " ");
                 }
                 Log.v("DataBase row:", row.toString());
                 dataCursor.moveToNext();
@@ -142,7 +142,6 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
 
     private void setUpMap(GoogleMap map) {
         mMap = map;
-
         //Circle example
         // Instantiates a new CircleOptions object and defines the center and radius
 /*
@@ -165,8 +164,8 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
         Geocoder geocode = new Geocoder(getContext());
         for (int i = 0; i < PlaceAmount.size(); i++) {
             //System.out.println(PlaceAmount.get(i).getPlace());
-            // TODO ADD Circle
-            // TODO UPDATE MAP WHEN CLICK ON MAP TAB (Resume)
+            // TODO ADD Circle ?
+            // TODO FIX SHUTDOWN WHEN ADD EXPENSE TO PLACE ALREADY DISPLAY ON MAP
             if (!PlaceAmount.get(i).getPlace().equals("empty")) {
                 geocodeAddress(PlaceAmount.get(i).getPlace(), PlaceAmount.get(i).getAmount(), geocode, mMap);
             }
@@ -182,12 +181,14 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
+        setUpMap(mMap);
         mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        mMap.clear();
         mapView.onPause();
     }
 
@@ -231,11 +232,15 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
             longitude = address.getLongitude();
         }
         if (latitude != 0 && longitude != 0) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(latitude, longitude))
-                    .title("Total expense : "+String.valueOf(amount)+" €"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(latitude, longitude), 10));
+            try {
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .title("Total expense : " + String.valueOf(amount) + " €"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(latitude, longitude), 10));
+            } catch (Exception e) {
+
+            }
         }
     }
 
