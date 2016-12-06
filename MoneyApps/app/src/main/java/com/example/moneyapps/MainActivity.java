@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
                         TabTable tab2 = new TabTable(mDbHelper);
                         return tab2;
                     case 2:
-                        TabViz tab3 = new TabViz();
+                        TabViz tab3 = new TabViz(mDbHelper);
                         return tab3;
                     case 3:
                         TabMap tab4 = new TabMap(mDbHelper);

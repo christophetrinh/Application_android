@@ -42,13 +42,13 @@ import static com.example.moneyapps.DataBaseAdapter.KEY_AMOUNT;
 import static com.example.moneyapps.DataBaseAdapter.KEY_PLACE;
 
 
+@SuppressLint("ValidFragment")
 public class TabMap extends Fragment implements OnMapReadyCallback {
 
     private DataBaseAdapter mDbHelper;
     MapView mapView;
     GoogleMap mMap;
 
-    @SuppressLint("ValidFragment")
     public TabMap(DataBaseAdapter mDb) {
         this.mDbHelper = mDb;
     }

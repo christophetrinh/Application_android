@@ -1,11 +1,14 @@
 package com.example.moneyapps.TabFragment;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.moneyapps.DataBaseAdapter;
 import com.example.moneyapps.R;
 
 import java.util.ArrayList;
@@ -30,12 +33,14 @@ import lecho.lib.hellocharts.view.LineChartView;
  * Created by mario on 29/11/2016.
  */
 
+@SuppressLint("ValidFragment")
 public class TabViz extends Fragment {
+
+    private DataBaseAdapter mDbHelper;
+    private List<Integer> years;
 
     public final static String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
             "Sep", "Oct", "Nov", "Dec",};
-
-    public final static String[] days = new String[]{"Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun",};
 
     private LineChartView chartTop;
     private ColumnChartView chartBottom;
@@ -43,7 +48,9 @@ public class TabViz extends Fragment {
     private LineChartData lineData;
     private ColumnChartData columnData;
 
-    public TabViz() {
+    public TabViz(DataBaseAdapter mDb) {
+        this.mDbHelper = mDb;
+        this.years = new ArrayList<Integer>();
     }
 
     @Override
@@ -57,32 +64,37 @@ public class TabViz extends Fragment {
         generateInitialLineData();
 
         // *** BOTTOM COLUMN CHART ***
-
         chartBottom = (ColumnChartView) rootView.findViewById(R.id.chart_bottom);
 
-        generateColumnData();
+        updateColumnData(this.mDbHelper);
 
         return rootView;
     }
 
-    private void generateColumnData() {
-
-        int numSubcolumns = 1;
-        int numColumns = months.length;
+    private void updateColumnData(DataBaseAdapter mDb) {
 
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
-        for (int i = 0; i < numColumns; ++i) {
 
-            values = new ArrayList<SubcolumnValue>();
-            for (int j = 0; j < numSubcolumns; ++j) {
-                values.add(new SubcolumnValue((float) Math.random() * 50f + 5, ChartUtils.pickColor()));
+        // Retrieve amount by year
+        Cursor dataCursor = mDb.groupbyYear();
+        if (dataCursor != null) {
+            int i = 0;
+            dataCursor.moveToFirst();
+            while (!dataCursor.isAfterLast()) {
+
+                values = new ArrayList<SubcolumnValue>();
+                values.add(new SubcolumnValue(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) , ChartUtils.pickColor()));
+                axisValues.add(new AxisValue(i).setLabel(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))));
+
+                years.add(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))));
+
+                columns.add(new Column(values).setHasLabelsOnlyForSelected(true));
+
+                dataCursor.moveToNext();
+                i++;
             }
-
-            axisValues.add(new AxisValue(i).setLabel(months[i]));
-
-            columns.add(new Column(values).setHasLabelsOnlyForSelected(true));
         }
 
         columnData = new ColumnChartData(columns);
@@ -98,22 +110,6 @@ public class TabViz extends Fragment {
         // Set selection mode to keep selected month column highlighted.
         chartBottom.setValueSelectionEnabled(true);
 
-
-
-        //chartBottom.setZoomType(ZoomType.HORIZONTAL);
-
-        // chartBottom.setOnClickListener(new View.OnClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // SelectedValue sv = chartBottom.getSelectedValue();
-        // if (!sv.isSet()) {
-        // generateInitialLineData();
-        // }
-        //
-        // }
-        // });
-
     }
 
     /**
@@ -121,13 +117,14 @@ public class TabViz extends Fragment {
      * will select value on column chart.
      */
     private void generateInitialLineData() {
-        int numValues = 7;
+
+        int numValues = months.length;
 
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
         List<PointValue> values = new ArrayList<PointValue>();
         for (int i = 0; i < numValues; ++i) {
             values.add(new PointValue(i, 0));
-            axisValues.add(new AxisValue(i).setLabel(days[i]));
+            axisValues.add(new AxisValue(i).setLabel(months[i]));
         }
 
         Line line = new Line(values);
@@ -146,24 +143,48 @@ public class TabViz extends Fragment {
         chartTop.setViewportCalculationEnabled(false);
 
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 110, 6, 0);
+        Viewport v = new Viewport(0, 110, 11, 0);
         chartTop.setMaximumViewport(v);
         chartTop.setCurrentViewport(v);
-
-        //chartTop.setZoomType(ZoomType.HORIZONTAL);
     }
 
-    private void generateLineData(int color, float range) {
+    private void updateLineData(int columnIndex, int color, float range) {
         // Cancel last animation if not finished.
         chartTop.cancelDataAnimation();
 
         // Modify data targets
         Line line = lineData.getLines().get(0);// For this example there is always only one line.
         line.setColor(color);
+        List<PointValue> values = line.getValues();
+
+        // Clear data
+        for (PointValue value : line.getValues()) {
+            value.set(value.getX(), 0);
+        }
+
+        // TODO Retrieve amount by month
+        Cursor dataCursor = this.mDbHelper.groupbyMonth();
+        if (dataCursor != null) {
+            dataCursor.moveToFirst();
+            while (!dataCursor.isAfterLast()) {
+                if(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))==this.years.get(columnIndex)){
+                    //Retrieve month info
+                    PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))-1);
+                    value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))-1,
+                                    dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2))));
+                }
+                dataCursor.moveToNext();
+            }
+        }
+        //System.out.println(line.getValues());
+/*
         for (PointValue value : line.getValues()) {
             // Change target only for Y value.
-            value.setTarget(value.getX(), (float) Math.random() * range);
+            System.out.println(value.set(0,50));
+            value.set(0,50);
+            //value.setTarget(value.getX(), (float) Math.random() * range);
         }
+        */
 
         // Start new data animation with 300ms duration;
         chartTop.startDataAnimation(300);
@@ -173,15 +194,24 @@ public class TabViz extends Fragment {
 
         @Override
         public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
-            generateLineData(value.getColor(), 100);
+            updateLineData(columnIndex, value.getColor(), 100);
         }
 
         @Override
         public void onValueDeselected() {
-
-            generateLineData(ChartUtils.COLOR_GREEN, 0);
-
+            updateLineData(0, ChartUtils.COLOR_GREEN, 0);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateColumnData(this.mDbHelper);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 }
 

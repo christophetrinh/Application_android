@@ -22,6 +22,8 @@ public class DataBaseAdapter {
 
     public static final String KEY_RETAIL = "Retail";
     public static final String KEY_DATE = "Date";
+    public static final String KEY_DATE_MONTH = "Date_month";
+    public static final String KEY_DATE_YEAR = "Date_year";
     public static final String KEY_PLACE = "Place";
     public static final String KEY_AMOUNT = "Amount";
     public static final String KEY_CATOGORY = "Category";
@@ -35,6 +37,8 @@ public class DataBaseAdapter {
                     + KEY_ROWID + " integer primary key autoincrement, "
                     + KEY_RETAIL + " text not null, "
                     + KEY_DATE + " text not null, "
+                    + KEY_DATE_MONTH + " integer, "
+                    + KEY_DATE_YEAR + " integer, "
                     + KEY_PLACE + " text not null, "
                     + KEY_AMOUNT + " text not null, "
                     + KEY_CATOGORY + " text not null, "
@@ -78,10 +82,16 @@ public class DataBaseAdapter {
             initialValues.put(KEY_RETAIL, "empty");}
         else
             initialValues.put(KEY_RETAIL, retail);
-        if (date.isEmpty())
+        if (date.isEmpty()) {
             initialValues.put(KEY_DATE, "empty");
-        else
+            initialValues.put(KEY_DATE_MONTH, -1);
+            initialValues.put(KEY_DATE_YEAR, -1);
+        }
+        else {
             initialValues.put(KEY_DATE, date);
+            initialValues.put(KEY_DATE_MONTH, getMonthDate(date));
+            initialValues.put(KEY_DATE_YEAR, getYearDate(date));
+        }
         if (place.isEmpty())
             initialValues.put(KEY_PLACE, "empty");
         else
@@ -118,6 +128,28 @@ public class DataBaseAdapter {
                 null);  // The sort order
     }
 
+    public Cursor groupbyMonth() {
+        return mDb.query(
+                DATABASE_TABLE, // The table to query
+                new String[]{KEY_DATE_YEAR,KEY_DATE_MONTH,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                null,   // The columns for the WHERE clause
+                null,   // The values for the WHERE clause
+                "CAST("+KEY_DATE_YEAR+" AS VARCHAR(4) )+'.'+CAST("+KEY_DATE_MONTH+" AS VARCHAR(2))",
+                null,   // don't filter by row groups
+                null);  // The sort order
+    }
+
+    public Cursor groupbyYear() {
+        return mDb.query(
+                DATABASE_TABLE, // The table to query
+                new String[]{KEY_DATE_YEAR,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                null,   // The columns for the WHERE clause
+                null,   // The values for the WHERE clause
+                KEY_DATE_YEAR,
+                null,   // don't filter by row groups
+                null);  // The sort order
+    }
+
     public Cursor groupbyPlace() {
         /*
         SELECT
@@ -134,7 +166,7 @@ public class DataBaseAdapter {
                 new String[]{KEY_PLACE,"SUM("+KEY_AMOUNT+")"},   // The columns to return
                 null,   // The columns for the WHERE clause
                 null,   // The values for the WHERE clause
-                KEY_PLACE,   // don't group the rows
+                KEY_PLACE,
                 null,   // don't filter by row groups
                 null);  // The sort order
     }
@@ -162,12 +194,23 @@ public class DataBaseAdapter {
         ContentValues args = new ContentValues();
         args.put(KEY_RETAIL, retail);
         args.put(KEY_DATE, date);
+        args.put(KEY_DATE_MONTH, getMonthDate(date));
+        args.put(KEY_DATE_YEAR, getYearDate(date));
         args.put(KEY_PLACE, place);
         args.put(KEY_AMOUNT, amount);
         args.put(KEY_CATOGORY, category);
         args.put(KEY_TAG, tag);
 
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+    }
+
+    public int getMonthDate(String date){
+        String monthDate[] = date.split("/");
+        return Integer.parseInt(monthDate[1]);
+    }
+    public int getYearDate(String date){
+        String monthDate[] = date.split("/");
+        return Integer.parseInt(monthDate[2]);
     }
 
 }
