@@ -235,7 +235,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
             try {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .title("Total expense : " + String.valueOf(amount) + " €"));
+                        .title( addressStr + " : " + String.valueOf(amount) + " €"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(latitude, longitude), 10));
             } catch (Exception e) {
