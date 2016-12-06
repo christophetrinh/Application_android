@@ -36,4 +36,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:9.4.0'
     compile 'de.codecrafters.tableview:tableview:2.4.1'
     compile 'com.google.android.gms:play-services-maps:9.4.0'
+    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
 }
