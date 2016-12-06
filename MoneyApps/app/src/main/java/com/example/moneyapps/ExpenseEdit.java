@@ -129,7 +129,7 @@ public class ExpenseEdit extends Activity {
         String expenseDate = dateFormat.format(mCalendar.getTime());
         if (mRowId == null) {
             mDbHelper.open();
-            long id = mDbHelper.createExpense(retail, expenseDate, place, amount, category, tag);
+            long id = mDbHelper.createExpense(retail, expenseDate, capitalize(place), amount, category, tag);
             mDbHelper.close();
             if (id > 0) {
                 mRowId = id;
@@ -137,9 +137,14 @@ public class ExpenseEdit extends Activity {
             }
         } else {
             mDbHelper.open();
-            mDbHelper.updateExpense(mRowId, retail, expenseDate, place, amount, category, tag);
+            mDbHelper.updateExpense(mRowId, retail, expenseDate, capitalize(place), amount, category, tag);
             mDbHelper.close();
         }
+    }
+
+    public static String capitalize(String s) {
+        if (s.length() == 0) return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
