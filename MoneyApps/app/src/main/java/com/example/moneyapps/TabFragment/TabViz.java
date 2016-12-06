@@ -99,21 +99,6 @@ public class TabViz extends Fragment {
         chartBottom.setValueSelectionEnabled(true);
 
 
-
-        //chartBottom.setZoomType(ZoomType.HORIZONTAL);
-
-        // chartBottom.setOnClickListener(new View.OnClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // SelectedValue sv = chartBottom.getSelectedValue();
-        // if (!sv.isSet()) {
-        // generateInitialLineData();
-        // }
-        //
-        // }
-        // });
-
     }
 
     /**
