@@ -319,7 +319,7 @@ public class ExpenseEdit extends Activity {
 
 
     private String updateWithNewLocation(Location location) {
-        String addressString = "No address found";
+        String country = new String();
         if(location != null){
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
@@ -327,17 +327,13 @@ public class ExpenseEdit extends Activity {
             try {
                 List<Address> addresses = gc.getFromLocation(latitude, longitude,
                         1);
-                StringBuilder sb = new StringBuilder();
                 if (addresses.size() > 0) {
                     Address address = addresses.get(0);
-                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                        sb.append("\n").append(address.getAddressLine(i));
-                    }
-                    addressString = sb.toString();
+                    country = address.getLocality();
                 }
             } catch (IOException e){}
         }
-        return addressString;
+        return country;
     }
 
 
