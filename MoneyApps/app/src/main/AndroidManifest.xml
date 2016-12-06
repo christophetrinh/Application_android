@@ -31,10 +31,6 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog"></activity>
         <activity android:name=".TakePicture"
             android:label="Read Text">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
 
