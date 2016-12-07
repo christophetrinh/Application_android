@@ -59,7 +59,6 @@ public class ExpenseTableDataAdapter extends LongPressAwareTableDataAdapter<Expe
 
     @Override
     public View getLongPressCellView(int rowIndex, int columnIndex, ViewGroup parentView) {
-        // TODO MODIFY (not necessary to return the default view)
         final Expense expense = getRowData(rowIndex);
         View renderedView = null;
         Log.v("Table long press", expense.getRetail());

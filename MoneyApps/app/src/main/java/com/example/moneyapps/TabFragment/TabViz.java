@@ -148,7 +148,7 @@ public class TabViz extends Fragment {
         chartTop.setCurrentViewport(v);
     }
 
-    private void updateLineData(int columnIndex, int color, float range) {
+    private void updateLineData(int columnIndex, int color, boolean flag) {
         // Cancel last animation if not finished.
         chartTop.cancelDataAnimation();
 
@@ -159,32 +159,25 @@ public class TabViz extends Fragment {
 
         // Clear data
         for (PointValue value : line.getValues()) {
-            value.set(value.getX(), 0);
+            value.setTarget(value.getX(), 0);
         }
 
-        // TODO Retrieve amount by month
-        Cursor dataCursor = this.mDbHelper.groupbyMonth();
-        if (dataCursor != null) {
-            dataCursor.moveToFirst();
-            while (!dataCursor.isAfterLast()) {
-                if(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))==this.years.get(columnIndex)){
-                    //Retrieve month info
-                    PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))-1);
-                    value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))-1,
-                                    dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2))));
+        if(flag) {
+            // TODO Retrieve amount by month
+            Cursor dataCursor = this.mDbHelper.groupbyMonth();
+            if (dataCursor != null) {
+                dataCursor.moveToFirst();
+                while (!dataCursor.isAfterLast()) {
+                    if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) == this.years.get(columnIndex)) {
+                        //Retrieve month info
+                        PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1);
+                        value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1,
+                                dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2))));
+                    }
+                    dataCursor.moveToNext();
                 }
-                dataCursor.moveToNext();
             }
         }
-        //System.out.println(line.getValues());
-/*
-        for (PointValue value : line.getValues()) {
-            // Change target only for Y value.
-            System.out.println(value.set(0,50));
-            value.set(0,50);
-            //value.setTarget(value.getX(), (float) Math.random() * range);
-        }
-        */
 
         // Start new data animation with 300ms duration;
         chartTop.startDataAnimation(300);
@@ -194,12 +187,12 @@ public class TabViz extends Fragment {
 
         @Override
         public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
-            updateLineData(columnIndex, value.getColor(), 100);
+            updateLineData(columnIndex, value.getColor(), true);
         }
 
         @Override
         public void onValueDeselected() {
-            updateLineData(0, ChartUtils.COLOR_GREEN, 0);
+            updateLineData(0, ChartUtils.COLOR_GREEN, false);
         }
     }
 

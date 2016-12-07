@@ -26,10 +26,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.R.attr.defaultValue;
+import static com.example.moneyapps.R.color.red;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -82,10 +85,28 @@ public class ExpenseEdit extends Activity {
         String extra = getIntent().getStringExtra(DataBaseAdapter.KEY_ROWID);
         if (extra != null) {
             Log.v("id press :", extra);
+
+            // Create button
+            Button button = new Button(this);
+            button.setText("Remove");
+            button.setBackgroundColor(getResources().getColor(R.color.red));
+            button.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    // Remove row in database
+                    mDbHelper.open();
+                    mDbHelper.deleteExpense(mRowId);
+                    finish();
+                }
+            });
+            // Add button to layout
+            LinearLayout ll = (LinearLayout)findViewById(R.id.form);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            ll.addView(button, lp);
+
             mRowId = Long.valueOf(extra);
             populateFieldsFromLongPress();
-            // TODO ADD REMOVE BUTTON AND LINK WITH DATABASE
-            // if rmv : deleteExpense(mRowId)
+
         }
         // Set text form TakePicture
         Boolean bool_take_picture;

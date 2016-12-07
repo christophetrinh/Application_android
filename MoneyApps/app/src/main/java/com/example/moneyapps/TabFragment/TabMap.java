@@ -142,19 +142,6 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
 
     private void setUpMap(GoogleMap map) {
         mMap = map;
-        //Circle example
-        // Instantiates a new CircleOptions object and defines the center and radius
-/*
-        LatLng circle_coord = new LatLng(37.4, -122.1);
-        CircleOptions circleOptions = new CircleOptions()
-                .center(circle_coord)
-                .fillColor(Color.RED)
-                .strokeColor(Color.RED)
-                .radius(100000); // In meters
-        // Get back the mutable Circle
-        Circle circle = mMap.addCircle(circleOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(circle_coord, 13));
-*/
 
         // Extract data from database
         List<ExpenseMap> PlaceAmount = ExtractFromDataBase(this.mDbHelper);
@@ -164,9 +151,8 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
         Geocoder geocode = new Geocoder(getContext());
         for (int i = 0; i < PlaceAmount.size(); i++) {
             //System.out.println(PlaceAmount.get(i).getPlace());
-            // TODO ADD Circle ?
             // TODO FIX SHUTDOWN WHEN ADD EXPENSE TO PLACE ALREADY DISPLAY ON MAP
-            if (!PlaceAmount.get(i).getPlace().equals("empty")) {
+            if (!PlaceAmount.get(i).getPlace().equals("Empty") & !PlaceAmount.get(i).getPlace().equals("empty")) {
                 geocodeAddress(PlaceAmount.get(i).getPlace(), PlaceAmount.get(i).getAmount(), geocode, mMap);
             }
         }

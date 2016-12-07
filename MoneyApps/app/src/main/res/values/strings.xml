@@ -15,6 +15,7 @@
 
     <string name="present_ticket">Please present a ticket</string>
     <string name="confirmButton">Save</string>
+    <string name="removeButton">Remove</string>
     <string name="expense_saved_message">Expense saved</string>
 
     <string name="ok">OK</string>
