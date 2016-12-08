@@ -3,6 +3,7 @@ package com.example.moneyapps.TabFragment;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,21 +18,21 @@ import com.example.moneyapps.R;
  */
 
 public class TabHome extends Fragment {
-    public static final String HOME_CHOICE = "home_preference";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        String sentence = new String();
+
+        PreferenceManager.setDefaultValues(getContext(), R.xml.preferences, false);
+        SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sentence;
         View v;
         v= inflater.inflate(R.layout.home_fragment, container, false);
+
+
         TextView button_view = (TextView) v.findViewById(R.id.home_text);
         Typeface typeFace= Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
         button_view.setTypeface(typeFace);
-
-        SharedPreferences settings = getActivity().getSharedPreferences(HOME_CHOICE, 0);
-
-        String home_display = settings.getString("home_preference","nothing");
-
-        Log.e("I RECEIVE", home_display);
+        String home_display = myPref.getString("home_choice","null");
 
         if (home_display.equals("Day")){
             sentence = "Today, you've spent :";
@@ -44,12 +45,15 @@ public class TabHome extends Fragment {
         else if (home_display.equals("Year")) {
             sentence = "This year, you've spent :";
         }
-
+        
+        else { //default case
+            sentence = "This month, you've spent:";
+        }
         //TODO recuperer l'amount
         button_view.setText(sentence + " 10 €");
-
-
         return v;
     }
+
+
 
 }

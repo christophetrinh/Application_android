@@ -12,7 +12,7 @@
         android:dependency="pref_sync"
         android:entries="@array/date_preference"
         android:entryValues="@array/date"
-        android:key="pref_syncConnectionType"
+        android:key="home_choice"
         android:title="Choose expense visualisation Home tab" />
 
 </PreferenceScreen>
