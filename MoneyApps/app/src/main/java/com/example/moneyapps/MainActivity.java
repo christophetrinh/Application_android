@@ -92,7 +92,7 @@ public class MainActivity extends ActionBarActivity {
                         TabMap tab4 = new TabMap(mDbHelper);
                         return tab4;
                     case 4:
-                        TabSettings tab5 = new TabSettings();
+                        TabSettings tab5 = new TabSettings(mDbHelper);
                         return tab5;
                     default:
                         return null;
