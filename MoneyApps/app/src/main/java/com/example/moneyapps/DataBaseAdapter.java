@@ -197,6 +197,17 @@ public class DataBaseAdapter {
         return mCursor;
     }
 
+    public Cursor groupbyCategory() {
+        return mDb.query(
+                DATABASE_TABLE, // The table to query
+                new String[]{KEY_CATOGORY,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                null,   // The columns for the WHERE clause
+                null,   // The values for the WHERE clause
+                KEY_CATOGORY,
+                null,   // don't filter by row groups
+                null);  // The sort order
+    }
+
     public boolean updateExpense(long rowId, String retail, String date, String place, String amount, String category, String tag) {
         ContentValues args = new ContentValues();
         args.put(KEY_RETAIL, retail);

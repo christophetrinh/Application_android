@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="com.example.moneyapps.MainActivity"
     android:weightSum="1">
 
     <TextView
@@ -20,7 +21,7 @@
     <lecho.lib.hellocharts.view.PieChartView
         android:id="@+id/bottom_pie"
         android:layout_width="wrap_content"
-        android:layout_height="411dp"
+        android:layout_height="500dp"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="100dp">
     </lecho.lib.hellocharts.view.PieChartView>
