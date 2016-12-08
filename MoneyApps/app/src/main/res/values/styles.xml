@@ -28,6 +28,10 @@
         <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
 
+        <!-- Settings Theme Colors -->
+        <item name="android:textColorAlertDialogListItem">@color/blue</item>
+        <item name="android:textColor">@color/black_semi_transparent</item>
+
     </style>
 
     <!-- Couleur de la flèche dans la toolbar -->
@@ -47,4 +51,6 @@
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
+
 </resources>
