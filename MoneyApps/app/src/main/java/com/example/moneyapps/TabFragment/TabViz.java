@@ -41,7 +41,8 @@ public class TabViz extends Fragment {
 
     public final static String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
             "Sep", "Oct", "Nov", "Dec",};
-
+    public final static int Max_ChartTop = 100;
+    public final static int Max_ChartBottom = 100;
     private LineChartView chartTop;
     private ColumnChartView chartBottom;
 
@@ -110,6 +111,8 @@ public class TabViz extends Fragment {
         // Set selection mode to keep selected month column highlighted.
         chartBottom.setValueSelectionEnabled(true);
 
+        chartBottom.setZoomEnabled(false);
+
     }
 
     /**
@@ -141,14 +144,15 @@ public class TabViz extends Fragment {
 
         // For build-up animation you have to disable viewport recalculation.
         chartTop.setViewportCalculationEnabled(false);
-
+        chartTop.setZoomEnabled(false);
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 110, 11, 0);
+        Viewport v = new Viewport(0, Max_ChartTop, 11, 0);
         chartTop.setMaximumViewport(v);
-        chartTop.setCurrentViewport(v);
+        chartTop.setCurrentViewportWithAnimation(v,300);
     }
 
     private void updateLineData(int columnIndex, int color, boolean flag) {
+        int max = Max_ChartTop;
         // Cancel last animation if not finished.
         chartTop.cancelDataAnimation();
 
@@ -163,7 +167,7 @@ public class TabViz extends Fragment {
         }
 
         if(flag) {
-            // TODO Retrieve amount by month
+            // Retrieve amount by month
             Cursor dataCursor = this.mDbHelper.groupbyMonth();
             if (dataCursor != null) {
                 dataCursor.moveToFirst();
@@ -173,11 +177,17 @@ public class TabViz extends Fragment {
                         PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1);
                         value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1,
                                 dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2))));
+                        if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2)))>max)
+                            max = dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2)));
                     }
                     dataCursor.moveToNext();
                 }
             }
         }
+
+        Viewport v = new Viewport(0, max, 11, 0);
+        chartTop.setMaximumViewport(v);
+        chartTop.setCurrentViewportWithAnimation(v,300);
 
         // Start new data animation with 300ms duration;
         chartTop.startDataAnimation(300);
