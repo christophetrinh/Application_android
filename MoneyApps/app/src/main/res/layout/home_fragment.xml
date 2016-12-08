@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context="com.example.moneyapps.MainActivity">
+
+    <TextView
+        android:id="@+id/home_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="300dp"
+        android:gravity="center"
+        android:text="hello"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColor="@color/purple"
+        android:textSize="36sp" />
+
+    <lecho.lib.hellocharts.view.PieChartView
+        android:id="@+id/bottom_pie"
+        android:layout_width="wrap_content"
+        android:layout_height="411dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="100dp"></lecho.lib.hellocharts.view.PieChartView>
+
+</LinearLayout>
