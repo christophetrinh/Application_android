@@ -1,5 +1,6 @@
 package com.example.moneyapps.TabFragment;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.icu.text.SymbolTable;
@@ -24,6 +25,7 @@ import com.example.moneyapps.R;
  * Created by mario on 29/11/2016.
  */
 
+@SuppressLint("ValidFragment")
 public class TabSettings extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private DataBaseAdapter mDbHelper;
@@ -48,6 +50,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        String amount;
         Log.d("tabsettings_preferences", key);
         switch (key) {
             case "home_choice":
@@ -58,18 +61,19 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 String home_display = sharedPreferences.getString(key,"null");
 
                 if (home_display.equals("Day")){
-                    sentence = "Today, you've spent :";
+                    sentence = "Today, you've spent : ";
                 }
 
                 else if (home_display.equals("Month")){
-                    sentence = "This month, you've spent :";
+                    sentence = "This month, you've spent : ";
                 }
 
                 else if (home_display.equals("Year")) {
-                    sentence = "This year, you've spent :";
+                    sentence = "This year, you've spent : ";
                 }
-                //TODO recuperer l'amount
-                button_view.setText(sentence + " 10 €");
+
+                amount = mDbHelper.getAmount(home_display);
+                button_view.setText(sentence + amount + " €");
             }
     }
 

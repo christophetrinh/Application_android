@@ -80,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
 
                 switch (position) {
                     case 0:
-                        TabHome tab1 = new TabHome();
+                        TabHome tab1 = new TabHome(mDbHelper);
                         return tab1;
                     case 1:
                         TabTable tab2 = new TabTable(mDbHelper);

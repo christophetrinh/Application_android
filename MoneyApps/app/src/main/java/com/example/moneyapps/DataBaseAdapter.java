@@ -10,6 +10,9 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by mario on 15/11/2016.
  */
@@ -22,6 +25,7 @@ public class DataBaseAdapter {
 
     public static final String KEY_RETAIL = "Retail";
     public static final String KEY_DATE = "Date";
+    public static final String KEY_DATE_DAY = "Date_day";
     public static final String KEY_DATE_MONTH = "Date_month";
     public static final String KEY_DATE_YEAR = "Date_year";
     public static final String KEY_PLACE = "Place";
@@ -37,6 +41,7 @@ public class DataBaseAdapter {
                     + KEY_ROWID + " integer primary key autoincrement, "
                     + KEY_RETAIL + " text not null, "
                     + KEY_DATE + " text not null, "
+                    + KEY_DATE_DAY + " integer, "
                     + KEY_DATE_MONTH + " integer, "
                     + KEY_DATE_YEAR + " integer, "
                     + KEY_PLACE + " text not null, "
@@ -84,11 +89,13 @@ public class DataBaseAdapter {
             initialValues.put(KEY_RETAIL, retail);
         if (date.isEmpty()) {
             initialValues.put(KEY_DATE, "empty");
+            initialValues.put(KEY_DATE_DAY, -1);
             initialValues.put(KEY_DATE_MONTH, -1);
             initialValues.put(KEY_DATE_YEAR, -1);
         }
         else {
             initialValues.put(KEY_DATE, date);
+            initialValues.put(KEY_DATE_DAY, getDayDate(date));
             initialValues.put(KEY_DATE_MONTH, getMonthDate(date));
             initialValues.put(KEY_DATE_YEAR, getYearDate(date));
         }
@@ -194,6 +201,7 @@ public class DataBaseAdapter {
         ContentValues args = new ContentValues();
         args.put(KEY_RETAIL, retail);
         args.put(KEY_DATE, date);
+        args.put(KEY_DATE_DAY, getDayDate(date));
         args.put(KEY_DATE_MONTH, getMonthDate(date));
         args.put(KEY_DATE_YEAR, getYearDate(date));
         args.put(KEY_PLACE, place);
@@ -204,13 +212,105 @@ public class DataBaseAdapter {
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
+    public int getDayDate(String date){
+        String Date[] = date.split("/");
+        return Integer.parseInt(Date[0]);
+    }
+
     public int getMonthDate(String date){
-        String monthDate[] = date.split("/");
-        return Integer.parseInt(monthDate[1]);
+        String Date[] = date.split("/");
+        return Integer.parseInt(Date[1]);
     }
     public int getYearDate(String date){
-        String monthDate[] = date.split("/");
-        return Integer.parseInt(monthDate[2]);
+        String Date[] = date.split("/");
+        return Integer.parseInt(Date[2]);
     }
+
+    public String getAmount(String period) {
+        String Amount = new String();
+        Cursor mCursor = null;
+        String current_date = new String();
+
+        if (period.equals("Day")) {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd");
+            current_date = sdf.format(new Date());
+
+            mCursor = mDb.query(
+                    DATABASE_TABLE, // The table to query
+                    new String[]{KEY_DATE_DAY,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                    null,   // The columns for the WHERE clause
+                    null,   // The values for the WHERE clause
+                    KEY_DATE_DAY,
+                    null,   // don't filter by row groups
+                    null);  // The sort order
+        }
+
+        else if (period.equals("Month")) {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("MM");
+            current_date = sdf.format(new Date());
+
+            mCursor = mDb.query(
+                    DATABASE_TABLE, // The table to query
+                    new String[]{KEY_DATE_MONTH,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                    null,   // The columns for the WHERE clause
+                    null,   // The values for the WHERE clause
+                    KEY_DATE_MONTH,
+                    null,   // don't filter by row groups
+                    null);  // The sort order
+        }
+
+        else if (period.equals("Year")) {
+
+
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            current_date = sdf.format(new Date());
+
+            mCursor = mDb.query(
+                    DATABASE_TABLE, // The table to query
+                    new String[]{KEY_DATE_YEAR,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                    null,   // The columns for the WHERE clause
+                    null,   // The values for the WHERE clause
+                    KEY_DATE_YEAR,
+                    null,   // don't filter by row groups
+                    null);  // The sort order
+
+        }
+
+        else { //defaut case
+
+            SimpleDateFormat sdf = new SimpleDateFormat("MM");
+            current_date = sdf.format(new Date());
+
+            mCursor = mDb.query(
+                    DATABASE_TABLE, // The table to query
+                    new String[]{KEY_DATE_MONTH,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                    null,   // The columns for the WHERE clause
+                    null,   // The values for the WHERE clause
+                    KEY_DATE_MONTH,
+                    null,   // don't filter by row groups
+                    null);  // The sort order
+        }
+
+
+        if (mCursor!= null) {
+            mCursor.moveToFirst();
+
+            while (!mCursor.isAfterLast()) {
+
+                String date_cursor = String.format("%02d", mCursor.getInt(mCursor.getColumnIndexOrThrow(mCursor.getColumnName(0))));
+                if (date_cursor.equals(current_date)){
+                    Amount = mCursor.getString(mCursor.getColumnIndexOrThrow(mCursor.getColumnName(1)));
+                    break;
+                }
+                mCursor.moveToNext();
+            }
+        }
+        return Amount;
+    }
+
+
 
 }
