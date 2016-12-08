@@ -170,4 +170,45 @@ public class DataBaseAdapter {
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
+
+    public String getAmount(String period) {
+        String Amount = new String();
+        Cursor pointer;
+        if (period.equals("Day")){
+        /*
+        SELECT
+                KEY_PLACE,
+        SUM(KEY_AMOUNT)
+        FROM
+                DATABASE_TABLE
+        GROUP BY
+        KEY_PLACE;
+        */
+            // Expanded version
+            pointer = mDb.query(
+                    DATABASE_TABLE, // The table to query
+                    new String[]{KEY_AMOUNT,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                    null,   // The columns for the WHERE clause
+                    null,   // The values for the WHERE clause
+                    KEY_PLACE,   // don't group the rows
+                    null,   // don't filter by row groups
+                    null);  // The sort order
+        }
+
+
+
+        else if (period.equals("Month")){
+
+        }
+
+        else if (period.equals("Year")) {
+
+        }
+
+        else { //default case
+
+        }
+        return Amount;
+    }
+
 }
