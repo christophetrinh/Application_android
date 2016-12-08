@@ -74,6 +74,9 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
                 amount = mDbHelper.getAmount(home_display);
                 button_view.setText(sentence + amount + " €");
+            case "home_pie":
+
+
             }
     }
 

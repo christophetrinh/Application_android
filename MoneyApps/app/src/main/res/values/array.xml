@@ -14,4 +14,15 @@
         <item>Year</item>
     </string-array>
 
+    <string-array name="home_pie_preference">
+        <item>Category</item>
+        <item>Tag</item>
+    </string-array>
+
+
+    <string-array name="pie_preference">
+        <item>Category</item>
+        <item>Tag</item>
+    </string-array>
+
 </resources>

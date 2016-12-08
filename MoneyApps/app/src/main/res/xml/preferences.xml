@@ -8,11 +8,19 @@
         android:textColor="@android:color/black" />
 
     <ListPreference
-        android:defaultValue="Day"
+        android:defaultValue="Month"
         android:dependency="pref_sync"
         android:entries="@array/date_preference"
         android:entryValues="@array/date"
         android:key="home_choice"
         android:title="Choose expense visualisation Home tab" />
+
+
+    <ListPreference
+        android:defaultValue="Category"
+        android:entries="@array/home_pie_preference"
+        android:entryValues="@array/pie_preference"
+        android:key="home_pie"
+        android:title="Choose the pie vizualisation in Home tab" />
 
 </PreferenceScreen>
