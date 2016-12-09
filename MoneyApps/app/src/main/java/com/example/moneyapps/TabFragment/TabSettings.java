@@ -75,12 +75,24 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 amount = mDbHelper.getAmount(home_display);
                 button_view.setText(sentence + amount + " €");
             case "home_pie":
+                String home_pie = sharedPreferences.getString(key,"null");
+                if (home_pie.equals("Category")){
+                //TODO finir l'update auto
+                }
 
+                else if (home_pie.equals("Tag")){
 
+                }
             }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }

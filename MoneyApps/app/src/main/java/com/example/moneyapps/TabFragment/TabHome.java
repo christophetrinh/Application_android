@@ -119,11 +119,23 @@ public class TabHome extends Fragment {
         return sum;
     }
 
-    public static List<ExpenseCategory> ExtractFromDataBase(DataBaseAdapter mDb) {
+    public List<ExpenseCategory> ExtractFromDataBase(DataBaseAdapter mDb) {
+        PreferenceManager.setDefaultValues(getContext(), R.xml.preferences, false);
+        SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         // Groupby place and sum amount
         // Return array list of class ExpenseMap
         final List<ExpenseCategory> CategoryAmount = new ArrayList<>();
-        Cursor dataCursor = mDb.groupbyCategory();
+        Cursor dataCursor = null;
+        // Retrieve choice in settings
+        String home_pie = myPref.getString("home_pie","null");
+        if (home_pie.equals("Category")){
+            //Category_Tag=false;
+            dataCursor = mDb.groupbyCategory();
+        }
+        else if (home_pie.equals("Tag")) {
+            //Category_Tag=true;
+            dataCursor = mDb.groupbyTag();
+        }
         if (dataCursor != null) {
             dataCursor.moveToFirst();
             while (!dataCursor.isAfterLast()) {
