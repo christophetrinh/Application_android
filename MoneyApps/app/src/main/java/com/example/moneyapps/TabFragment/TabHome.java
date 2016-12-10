@@ -172,7 +172,7 @@ public class TabHome extends Fragment {
     }
 
 
-    private class ValueTouchListener implements PieChartOnValueSelectListener {
+    public class ValueTouchListener implements PieChartOnValueSelectListener {
 
         @Override
         public void onValueSelected(int arcIndex, SliceValue value) {
