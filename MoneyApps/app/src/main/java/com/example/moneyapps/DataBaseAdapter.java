@@ -33,6 +33,7 @@ public class DataBaseAdapter {
     public static final String KEY_CATOGORY = "Category";
     public static final String KEY_TAG = "Tag";
     public static final String KEY_ROWID = "_id";
+
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
 
