@@ -125,8 +125,6 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                             .setBackOff(new ExponentialBackOff());
                     // TODO save from API
                     getResultsFromApi();
-                    //CheckBoxPreference showContact = (CheckBoxPreference)findPreference("pref_sync");
-                    //showContact.setChecked(false);
                 }
                 break;
             case "home_choice":
@@ -221,6 +219,8 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
     @Override
     public void onResume() {
         super.onResume();
+        CheckBoxPreference showContact = (CheckBoxPreference)findPreference("pref_sync");
+        showContact.setChecked(false);
     }
 
     // GOOGLE API
@@ -503,7 +503,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 BatchUpdateValuesResponse oResp1 = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest).execute();
                 flag = true;
                 // TODO TOAST for success (PB with getContext)
-                Toast.makeText(getContext(),"Save to Google sheet",Toast.LENGTH_SHORT);
+                Toast.makeText(getActivity(),"Save to Google sheet",Toast.LENGTH_SHORT);
             } catch (IOException e) {
                 // TODO TOAST for fail
                 Log.v("Sheets failed", String.valueOf(e));
