@@ -21,6 +21,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -87,8 +88,6 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
     private static final String spreadsheetId = "128ht2Igh9xGTT1T7Q6D_dSpNsOT2gISE9WVr8Sv8VGw";
     private static final String range = "A2:G";
 
-    private PieChartView chart;
-    private PieChartData data;
     private DataBaseAdapter mDbHelper;
 
     public TabSettings(DataBaseAdapter mDbHelper) {
@@ -128,88 +127,27 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 }
                 break;
             case "home_choice":
-                String sentence = new String();
-                TextView button_view = (TextView) getActivity().findViewById(R.id.home_text);
-                Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Light.ttf");
-                button_view.setTypeface(typeFace);
-                String home_display = sharedPreferences.getString(key, "null");
-
-                if (home_display.equals("Day")) {
-                    sentence = "Today, you've spent : ";
-                } else if (home_display.equals("Month")) {
-                    sentence = "This month, you've spent : ";
-                } else if (home_display.equals("Year")) {
-                    sentence = "This year, you've spent : ";
-                }
-
-                amount = mDbHelper.getAmount(home_display);
-                button_view.setText(sentence + amount + " €");
-                break;
-            case "home_pie":
-                String home_pie = sharedPreferences.getString(key, "null");
-                final List<TabHome.ExpenseCategory> CategoryAmount = new ArrayList<>();
-                Cursor dataCursor = null;
-                if (home_pie.equals("Category")) {
-                    dataCursor = mDbHelper.groupbyCategory();
-                } else if (home_pie.equals("Tag")) {
-                    dataCursor = mDbHelper.groupbyTag();
-                }
-                if (dataCursor != null) {
-                    dataCursor.moveToFirst();
-                    while (!dataCursor.isAfterLast()) {
-                        CategoryAmount.add(new TabHome.ExpenseCategory(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))),
-                                Double.parseDouble(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))))));
-
-                        dataCursor.moveToNext();
+                List<Fragment> fragList = getFragmentManager().getFragments();
+                for(Fragment f: fragList) {
+                    if(f.getClass() == TabHome.class) {
+                        ((TabHome)f).updateAmount();
                     }
                 }
-                double sum = Totalsum(CategoryAmount);
-                List<SliceValue> values = new ArrayList<SliceValue>();
-                for (TabHome.ExpenseCategory expense : CategoryAmount) {
-                    SliceValue sliceValue = new SliceValue((float) (expense.getAmount() / sum) * 100, ChartUtils.pickColor());
-                    sliceValue.setLabel(expense.getCategory());
-                    values.add(sliceValue);
+                break;
+            case "home_pie":
+                fragList = getFragmentManager().getFragments();
+                for(Fragment f: fragList) {
+                    if(f.getClass() == TabHome.class) {
+                        ((TabHome)f).updateDataPiechart();
+                    }
                 }
-
-                data = new PieChartData(values);
-                data.setHasLabels(true);
-                data.setHasCenterCircle(true);
-
-                chart = (PieChartView) getActivity().findViewById(R.id.bottom_pie);
-                chart.setOnValueTouchListener(new ValueTouchListener());
-                chart.setPieChartData(data);
                 break;
             default :
                 break;
         }
     }
 
-    public class ValueTouchListener implements PieChartOnValueSelectListener {
 
-        @Override
-        public void onValueSelected(int arcIndex, SliceValue value) {
-            //Toast.makeText(getActivity(), "Selected: " + value, Toast.LENGTH_SHORT).show();
-
-            data.setCenterText1(String.valueOf(((int) value.getValue())) + " %");
-
-            Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
-            data.setCenterText1Typeface(tf);
-            // Get font size from dimens.xml and convert it to sp(library uses sp values).
-            data.setCenterText1FontSize(ChartUtils.px2sp(getResources().getDisplayMetrics().scaledDensity,
-                    (int) getResources().getDimension(R.dimen.pie_chart_text1_size)));
-
-            data.setCenterText2(String.valueOf(value.getLabel()));
-            data.setCenterText2Typeface(tf);
-            data.setCenterText2FontSize(ChartUtils.px2sp(getResources().getDisplayMetrics().scaledDensity,
-                    (int) getResources().getDimension(R.dimen.pie_chart_text2_size)));
-        }
-
-        @Override
-        public void onValueDeselected() {
-            // Auto-generated method stub
-        }
-
-    }
 
     @Override
     public void onPause() {
@@ -238,7 +176,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            Toast.makeText(getContext(),"No network connection available.",Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(),"No network connection available.",Toast.LENGTH_SHORT).show();
         } else {
             new TabSettings.MakeRequestTask(mCredential).execute();
         }
@@ -502,10 +440,9 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
                 BatchUpdateValuesResponse oResp1 = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest).execute();
                 flag = true;
-                // TODO TOAST for success (PB with getContext)
-                Toast.makeText(getActivity(),"Save to Google sheet",Toast.LENGTH_SHORT);
+                display_msg("Saved to Google sheet");
             } catch (IOException e) {
-                // TODO TOAST for fail
+                display_msg("Error while try to connect to the drive");
                 Log.v("Sheets failed", String.valueOf(e));
             }
             return flag;
@@ -573,5 +510,14 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
             }
         }
 
+    }
+
+    public void display_msg(final String text_to_display) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

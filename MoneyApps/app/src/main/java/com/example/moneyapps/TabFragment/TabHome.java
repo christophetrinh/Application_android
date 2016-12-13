@@ -34,6 +34,7 @@ public class TabHome extends Fragment {
     private PieChartView chart;
     private PieChartData data;
     private DataBaseAdapter mDbHelper;
+    private TextView button_view;
 
     public TabHome(DataBaseAdapter mDb) {
         this.mDbHelper = mDb;
@@ -50,29 +51,10 @@ public class TabHome extends Fragment {
         v= inflater.inflate(R.layout.home_fragment, container, false);
 
         // Title message
-        TextView button_view = (TextView) v.findViewById(R.id.home_text);
+        button_view = (TextView) v.findViewById(R.id.home_text);
         Typeface typeFace= Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
         button_view.setTypeface(typeFace);
-        String home_display = myPref.getString("home_choice","null");
-
-        if (home_display.equals("Day")){
-            sentence = "Today, you've spent : ";
-        }
-
-        else if (home_display.equals("Month")){
-            sentence = "This month, you've spent : ";
-        }
-
-        else if (home_display.equals("Year")) {
-            sentence = "This year, you've spent : ";
-        }
-        
-        else { //default case
-            sentence = "This month, you've spent: ";
-        }
-
-        amount = mDbHelper.getAmount(home_display);
-        button_view.setText(sentence + amount + " €");
+        updateAmount();
 
         // Pie chart
         chart = (PieChartView) v.findViewById(R.id.bottom_pie);
@@ -90,7 +72,7 @@ public class TabHome extends Fragment {
         updateDataPiechart();
     }
 
-    private void updateDataPiechart() {
+    public void updateDataPiechart() {
 
         List<ExpenseCategory> CategoryAmount = ExtractFromDataBase(this.mDbHelper);
         //System.out.println("Cate"+CategoryAmount.size());
@@ -199,10 +181,7 @@ public class TabHome extends Fragment {
 
     }
 
-    private void updateAmount() {
-        TextView button_view = (TextView) getActivity().findViewById(R.id.home_text);
-        Typeface typeFace= Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
-        button_view.setTypeface(typeFace);
+    public void updateAmount() {
         String sentence;
         String amount;
         SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -225,6 +204,9 @@ public class TabHome extends Fragment {
         }
 
         amount = mDbHelper.getAmount(home_display);
+        if (amount.isEmpty()){
+            amount = "0";
+        }
         button_view.setText(sentence + amount + " €");
     }
 
