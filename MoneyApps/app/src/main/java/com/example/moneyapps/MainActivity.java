@@ -1,14 +1,18 @@
 package com.example.moneyapps;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.ActionBarActivity;
@@ -26,6 +30,9 @@ import java.util.Arrays;
 
 
 public class MainActivity extends ActionBarActivity {
+    private static final String TAG = "MainActivity";
+    // Permission request codes need to be < 256
+    private static final int RC_HANDLE_ACCESS_FINE = 3;
 
     private static final int ACTIVITY_CREATE = 0;
     MaterialViewPager materialViewPager;
@@ -187,6 +194,15 @@ public class MainActivity extends ActionBarActivity {
         this.materialViewPager.getViewPager().setOffscreenPageLimit(tabCount);
         //relie les tabs au viewpager
         this.materialViewPager.getPagerTitleStrip().setViewPager(this.materialViewPager.getViewPager());
+
+
+        // Check for the access_fine locaton permission.  If the
+        // permission is not granted yet, request permission.
+        int raf = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (raf != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG,"Permission not granted");
+            requestAccessFindLocationPermission();
+        }
     }
 
     private void debugDatabase() {
@@ -259,5 +275,28 @@ public class MainActivity extends ActionBarActivity {
     private void takePicture() {
         Intent i = new Intent(this, TakePicture.class);
         startActivityForResult(i, ACTIVITY_CREATE);
+    }
+
+
+    /**
+     * Handles the requesting of the access fine permission.  This includes
+     * showing a "Snackbar" message of why the permission is needed then
+     * sending the request.
+     */
+    private void requestAccessFindLocationPermission() {
+        Log.w(TAG, "Access find location  permission is not granted. Requesting permission");
+
+        final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_ACCESS_FINE);
+            return;
+        }
+
+        final Activity thisActivity = this;
+
+        ActivityCompat.requestPermissions(thisActivity, permissions,
+                RC_HANDLE_ACCESS_FINE);
     }
 }
