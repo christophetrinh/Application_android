@@ -9,7 +9,6 @@
 
     <ListPreference
         android:defaultValue="Month"
-        android:dependency="pref_sync"
         android:entries="@array/date_preference"
         android:entryValues="@array/date"
         android:key="home_choice"
