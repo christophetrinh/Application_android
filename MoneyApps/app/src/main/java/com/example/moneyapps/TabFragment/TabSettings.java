@@ -176,7 +176,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            Toast.makeText(getContext(),"No network connection available.",Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(),"No network connection available.",Toast.LENGTH_SHORT).show();
         } else {
             new TabSettings.MakeRequestTask(mCredential).execute();
         }
@@ -440,10 +440,12 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
                 BatchUpdateValuesResponse oResp1 = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest).execute();
                 flag = true;
+                display_msg("Saved to Google sheet");
                 // TODO TOAST for success (PB with getContext)
-                Toast.makeText(getActivity(),"Save to Google sheet",Toast.LENGTH_SHORT);
             } catch (IOException e) {
                 // TODO TOAST for fail
+
+                display_msg("Error while try to connect to the drive");
                 Log.v("Sheets failed", String.valueOf(e));
             }
             return flag;
@@ -511,5 +513,14 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
             }
         }
 
+    }
+
+    public void display_msg(final String text_to_display) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
