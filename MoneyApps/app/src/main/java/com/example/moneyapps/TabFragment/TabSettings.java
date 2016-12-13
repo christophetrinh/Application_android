@@ -441,10 +441,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 BatchUpdateValuesResponse oResp1 = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest).execute();
                 flag = true;
                 display_msg("Saved to Google sheet");
-                // TODO TOAST for success (PB with getContext)
             } catch (IOException e) {
-                // TODO TOAST for fail
-
                 display_msg("Error while try to connect to the drive");
                 Log.v("Sheets failed", String.valueOf(e));
             }
