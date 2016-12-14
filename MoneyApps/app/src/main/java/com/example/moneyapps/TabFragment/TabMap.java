@@ -151,7 +151,6 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
         Geocoder geocode = new Geocoder(getContext());
         for (int i = 0; i < PlaceAmount.size(); i++) {
             //System.out.println(PlaceAmount.get(i).getPlace());
-            // TODO FIX SHUTDOWN WHEN ADD EXPENSE TO PLACE ALREADY DISPLAY ON MAP
             if (!PlaceAmount.get(i).getPlace().equals("Empty") & !PlaceAmount.get(i).getPlace().equals("empty")) {
                 geocodeAddress(PlaceAmount.get(i).getPlace(), PlaceAmount.get(i).getAmount(), geocode, mMap);
             }

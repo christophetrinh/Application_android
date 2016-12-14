@@ -85,11 +85,11 @@ public class DataBaseAdapter {
     public long createExpense(String retail, String date, String place, String amount, String category, String tag) {
         ContentValues initialValues = new ContentValues();
         if (retail.isEmpty()){
-            initialValues.put(KEY_RETAIL, "empty");}
+            initialValues.put(KEY_RETAIL, "Empty");}
         else
-            initialValues.put(KEY_RETAIL, retail);
+            initialValues.put(KEY_RETAIL, capitalize(retail));
         if (date.isEmpty()) {
-            initialValues.put(KEY_DATE, "empty");
+            initialValues.put(KEY_DATE, "Empty");
             initialValues.put(KEY_DATE_DAY, -1);
             initialValues.put(KEY_DATE_MONTH, -1);
             initialValues.put(KEY_DATE_YEAR, -1);
@@ -101,23 +101,28 @@ public class DataBaseAdapter {
             initialValues.put(KEY_DATE_YEAR, getYearDate(date));
         }
         if (place.isEmpty())
-            initialValues.put(KEY_PLACE, "empty");
+            initialValues.put(KEY_PLACE, "Empty");
         else
-            initialValues.put(KEY_PLACE, place);
+            initialValues.put(KEY_PLACE, capitalize(place));
         if (amount.isEmpty())
             initialValues.put(KEY_AMOUNT, "0");
         else
             initialValues.put(KEY_AMOUNT, amount);
         if (category.isEmpty())
-            initialValues.put(KEY_CATOGORY, "empty");
+            initialValues.put(KEY_CATOGORY, "Empty");
         else
-            initialValues.put(KEY_CATOGORY, category);
+            initialValues.put(KEY_CATOGORY, capitalize(category));
         if (tag.isEmpty())
-            initialValues.put(KEY_TAG, "empty");
+            initialValues.put(KEY_TAG, "Empty");
         else
-            initialValues.put(KEY_TAG, tag);
+            initialValues.put(KEY_TAG, capitalize(tag));
 
         return mDb.insert(DATABASE_TABLE, null, initialValues);
+    }
+
+    public static String capitalize(String s) {
+        if (s.length() == 0) return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
     public boolean deleteExpense(long rowId) {

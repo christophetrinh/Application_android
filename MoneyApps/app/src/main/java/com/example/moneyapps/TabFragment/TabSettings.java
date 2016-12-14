@@ -55,7 +55,12 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.BatchClearValuesRequest;
+import com.google.api.services.sheets.v4.model.BatchClearValuesResponse;
 import com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -81,12 +86,15 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
-    private static final String BUTTON_TEXT = "Call Google Sheets API";
+
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {SheetsScopes.SPREADSHEETS};
+    private static final String[] SCOPES_SHEETS = {SheetsScopes.SPREADSHEETS};
+    private static final String[] SCOPES_DRIVE = { DriveScopes.DRIVE_METADATA_READONLY };
+    private static boolean Select_API = false; // False: DRIVE; True: SHEETS
+
     // Info Spreadsheet
     private static final String spreadsheetId = "128ht2Igh9xGTT1T7Q6D_dSpNsOT2gISE9WVr8Sv8VGw";
-    private static final String range = "A2:G";
+    private static final String range = "A1:G";
 
     private DataBaseAdapter mDbHelper;
 
@@ -111,18 +119,26 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        System.out.println(key);
         String amount;
         switch (key) {
             case "pref_sync":
                 boolean sync_value = sharedPreferences.getBoolean(key, false);
                 if (sync_value) {
-                    System.out.println(sync_value);
+                    // TODO SELECTION AND LINK WITH SPREASHEET ID
+                    // DRIVE API to choose the spreadsheet
                     // Initialize credentials and service object.
+                    Select_API = false;
                     mCredential = GoogleAccountCredential.usingOAuth2(
-                            getContext(), Arrays.asList(SCOPES))
+                            getContext(), Arrays.asList(SCOPES_DRIVE))
                             .setBackOff(new ExponentialBackOff());
-                    // TODO save from API
+                    getResultsFromApi();
+
+                    // SHEET API to retrieve or update spreadsheet
+                    // Initialize credentials and service object.
+                    Select_API = true;
+                    mCredential = GoogleAccountCredential.usingOAuth2(
+                            getContext(), Arrays.asList(SCOPES_SHEETS))
+                            .setBackOff(new ExponentialBackOff());
                     getResultsFromApi();
                 }
                 break;
@@ -147,8 +163,6 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         }
     }
 
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -161,7 +175,16 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         showContact.setChecked(false);
     }
 
-    // GOOGLE API
+    public void display_msg(final String text_to_display) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Google API
 
     /**
      * Attempt to call the API, after verifying that all the preconditions are
@@ -176,9 +199,13 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            Toast.makeText(getContext(),"No network connection available.",Toast.LENGTH_SHORT).show();
+            display_msg("No network connection available.");
         } else {
-            new TabSettings.MakeRequestTask(mCredential).execute();
+            if (Select_API)
+                new MakeRequestTaskSheets(mCredential).execute();
+            else {
+                new MakeRequestTaskDrive(mCredential).execute();
+            }
         }
     }
 
@@ -228,13 +255,12 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
      *                    activity result.
      */
     @Override
-    public void onActivityResult(
-            int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    Toast.makeText(getContext(),"This app requires Google Play Services. Please install",Toast.LENGTH_SHORT);
+                    display_msg("This app requires Google Play Services. Please install");
                 } else {
                     getResultsFromApi();
                 }
@@ -366,14 +392,107 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
     }
 
     /**
+     * An asynchronous task that handles the Drive API call.
+     * Placing the API calls in their own task ensures the UI stays responsive.
+     */
+    private class MakeRequestTaskDrive extends AsyncTask<Void, Void, List<String>> {
+        private com.google.api.services.drive.Drive mService = null;
+        private Exception mLastError = null;
+
+            MakeRequestTaskDrive(GoogleAccountCredential credential) {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            mService = new com.google.api.services.drive.Drive.Builder(
+                    transport, jsonFactory, credential)
+                    .setApplicationName("Money App")
+                    .build();
+        }
+
+        /**
+         * Background task to call Drive API.
+         * @param params no parameters needed for this task.
+         */
+        @Override
+        protected List<String> doInBackground(Void... params) {
+            try {
+                return getDataFromApi();
+            } catch (Exception e) {
+                mLastError = e;
+                cancel(true);
+                return null;
+            }
+        }
+
+        /**
+         * Fetch a list of up to 10 file names and IDs.
+         * @return List of Strings describing files, or an empty list if no files
+         *         found.
+         * @throws IOException
+         */
+        private List<String> getDataFromApi() throws IOException {
+            // Get a list of up to 10 files.
+            List<String> fileInfo = new ArrayList<String>();
+            FileList result = mService.files().list()
+                    .setPageSize(10)
+                    .setFields("nextPageToken, files(id, name)")
+                    .execute();
+            List<File> files = result.getFiles();
+            if (files != null) {
+                for (File file : files) {
+                    fileInfo.add(String.format("%s (%s)\n",
+                            file.getName(), file.getId()));
+                }
+            }
+            return fileInfo;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected void onPostExecute(List<String> output) {
+            if (output == null || output.size() == 0) {
+                display_msg("No results returned.");
+            } else {
+                //TODO REMOVE ?
+                output.add(0, "Data retrieved using the Drive API:");
+                System.out.println(TextUtils.join("\n", output));
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            if (mLastError != null) {
+                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                    showGooglePlayServicesAvailabilityErrorDialog(
+                            ((GooglePlayServicesAvailabilityIOException) mLastError)
+                                    .getConnectionStatusCode());
+                } else if (mLastError instanceof UserRecoverableAuthIOException) {
+                    startActivityForResult(
+                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                            REQUEST_AUTHORIZATION);
+                } else {
+                    Log.e("DRIVE API", "The following error occurred:\n"
+                            + mLastError.getMessage());
+                }
+            } else {
+                Log.e("DRIVE API", "Request cancelled.");
+            }
+        }
+    }
+
+    /**
      * An asynchronous task that handles the Google Sheets API call.
      * Placing the API calls in their own task ensures the UI stays responsive.
      */
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
+    private class MakeRequestTaskSheets extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.sheets.v4.Sheets mService = null;
         private Exception mLastError = null;
 
-        MakeRequestTask(GoogleAccountCredential credential) {
+        MakeRequestTaskSheets(GoogleAccountCredential credential) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.sheets.v4.Sheets.Builder(
@@ -390,7 +509,10 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         @Override
         protected List<String> doInBackground(Void... params) {
             try {
+                // TODO
+                // Save data
                 setDataFromApi();
+                // Plot data save
                 return getDataFromApi();
             } catch (Exception e) {
                 mLastError = e;
@@ -400,21 +522,20 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         }
 
         /**
-         * Fetch a list of names and majors of students in a sample spreadsheet:
-         * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-         *
+         * Fetch a list of names and majors of students in a sample spreadsheet:*
          * @return List of names and majors
          * @throws IOException
          */
 
         private List<String> getDataFromApi() throws IOException {
             List<String> results = new ArrayList<String>();
+            // TODO LINK TO THE DATABASE (generate rowId and cut date)
             ValueRange response = this.mService.spreadsheets().values()
                     .get(spreadsheetId, range)
                     .execute();
             List<List<Object>> values = response.getValues();
             if (values != null) {
-                results.add("_id - Retail - Date - Place - Amount - Category - Place");
+                //results.add("_id - Retail - Date - Place - Amount - Category - Place");
                 for (List row : values) {
                     results.add(row.get(0) + "\t" + row.get(1)+ "\t" + row.get(2)+"\t" + row.get(3)+
                             "\t" + row.get(4)+ "\t" + row.get(5)+ "\t" + row.get(6));
@@ -435,14 +556,21 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 List<ValueRange> oList = new ArrayList<>();
                 oList.add(oRange);
 
-                BatchUpdateValuesRequest oRequest = new BatchUpdateValuesRequest();
-                oRequest.setValueInputOption("RAW").setData(oList);
+                // TODO Clear all test ?
+                //BatchClearValuesRequest oRequest_clear = new BatchClearValuesRequest();
+                //oRequest_clear.getRanges(range);
+                this.mService.spreadsheets().get(spreadsheetId).clear();
+                //BatchClearValuesResponse oResp_clear = this.mService.spreadsheets().values().batchClear(spreadsheetId, oRequest_clear).execute();
 
-                BatchUpdateValuesResponse oResp1 = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest).execute();
+                // Update
+                BatchUpdateValuesRequest oRequest_update = new BatchUpdateValuesRequest();
+                oRequest_update.setValueInputOption("RAW").setData(oList);
+                BatchUpdateValuesResponse oResp_update = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest_update).execute();
+
                 flag = true;
-                display_msg("Saved to Google sheet");
+                display_msg("Save to Google sheet");
             } catch (IOException e) {
-                display_msg("Error while try to connect to the drive");
+                display_msg("Sheets failed");
                 Log.v("Sheets failed", String.valueOf(e));
             }
             return flag;
@@ -451,22 +579,33 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         public List<List<Object>> setData ()  {
             // Describe Row
             List<List<Object>> data = new ArrayList<List<Object>>();
-            // TODO link the database
+            // TODO REMOVE KEY ROW ID
+            List<Object> dataTitle = new ArrayList<Object>();
+            dataTitle.add(mDbHelper.KEY_ROWID);
+            dataTitle.add(mDbHelper.KEY_RETAIL);
+            dataTitle.add(mDbHelper.KEY_DATE);
+            dataTitle.add(mDbHelper.KEY_PLACE);
+            dataTitle.add(mDbHelper.KEY_AMOUNT);
+            dataTitle.add(mDbHelper.KEY_CATOGORY);
+            dataTitle.add(mDbHelper.KEY_TAG);
+            data.add(dataTitle);
+
+            // link the database
             Cursor expenseCursor = mDbHelper.fetchAllExpense();
             if (expenseCursor != null) {
                 expenseCursor.moveToFirst();
                 while (!expenseCursor.isAfterLast()) {
                     // Describe columns for one row
-                    List<Object> data1 = new ArrayList<Object>();
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_ROWID)));
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_RETAIL)));
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_DATE)));
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_PLACE)));
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT)));
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_CATOGORY)));
-                    data1.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_TAG)));
+                    List<Object> dataRow = new ArrayList<Object>();
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_ROWID)));
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_RETAIL)));
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_DATE)));
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_PLACE)));
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT)));
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_CATOGORY)));
+                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_TAG)));
 
-                    data.add (data1);
+                    data.add(dataRow);
                     expenseCursor.moveToNext();
                 }
             }
@@ -475,16 +614,16 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getContext(),"Calling Google Sheets API ...",Toast.LENGTH_SHORT);
+            display_msg("Calling Google Sheets API ...");
         }
 
 
         @Override
         protected void onPostExecute(List<String> output) {
-            //mProgress.hide();
             if (output == null || output.size() == 0) {
-                Toast.makeText(getContext(),"No results returned.",Toast.LENGTH_SHORT);
+                display_msg("No results returned.");
             } else {
+                // TODO REMOVE ?
                 output.add(0, "Data retrieved using the Google Sheets API:");
                 System.out.println(TextUtils.join("\n", output));
             }
@@ -502,22 +641,13 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             REQUEST_AUTHORIZATION);
                 } else {
-                    Toast.makeText(getContext(),"The following error occurred:\n"
-                            + mLastError.getMessage(),Toast.LENGTH_SHORT);
+                    Log.e("SHEET API", "The following error occurred:\n"
+                            + mLastError.getMessage());
                 }
             } else {
-                Toast.makeText(getContext(),"Request cancelled.",Toast.LENGTH_SHORT);
+                Log.e("SHEET API", "Request cancelled.");
             }
         }
 
-    }
-
-    public void display_msg(final String text_to_display) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(),text_to_display,Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

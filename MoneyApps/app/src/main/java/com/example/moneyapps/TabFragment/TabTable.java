@@ -97,7 +97,7 @@ public class TabTable extends Fragment {
 
         @Override
         public boolean onDataLongClicked(final int rowIndex, final Expense clickedData) {
-            final String expenseString = "Long Click: " + " " + clickedData.getRetail();
+            final String expenseString = "Edit expense: " + " " + clickedData.getRetail();
             Toast.makeText(getContext(), expenseString, Toast.LENGTH_SHORT).show();
 
             //link the form
