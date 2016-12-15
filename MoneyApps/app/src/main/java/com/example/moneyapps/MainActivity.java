@@ -24,6 +24,7 @@ import android.widget.ImageView;
 
 import com.example.moneyapps.TabFragment.*;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 
 import java.util.Arrays;
@@ -57,6 +58,9 @@ public class MainActivity extends ActionBarActivity {
                 //actionA.setTitle("Action A clicked");
                 Log.v("Button", "Clik on button A");
                 takePicture();
+                // Close Menu
+                FloatingActionsMenu Menu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+                Menu.collapse();
             }
         });
 
@@ -68,6 +72,9 @@ public class MainActivity extends ActionBarActivity {
                 Log.v("Button", "Clik on button B");
                 createForm();
                 debugDatabase();
+                // Close Menu
+                FloatingActionsMenu Menu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+                Menu.collapse();
             }
         });
 

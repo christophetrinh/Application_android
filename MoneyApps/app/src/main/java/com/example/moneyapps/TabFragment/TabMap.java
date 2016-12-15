@@ -122,6 +122,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
     private static void debugDatabase(Cursor dataCursor) {
         if (dataCursor != null) {
             // Print
+            // TODO remove ?
             Log.v("DataBase Columns: ", Arrays.toString(dataCursor.getColumnNames()));
             Log.v("DataBase rows number:", String.valueOf(dataCursor.getCount()));
 

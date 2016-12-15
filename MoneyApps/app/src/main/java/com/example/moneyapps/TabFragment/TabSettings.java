@@ -3,17 +3,22 @@ package com.example.moneyapps.TabFragment;
 import android.Manifest;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.icu.text.SimpleDateFormat;
 import android.icu.text.SymbolTable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -21,6 +26,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -42,6 +48,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import com.example.moneyapps.DataBaseAdapter;
+import com.example.moneyapps.data.Expense;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import com.example.moneyapps.R;
@@ -61,17 +68,27 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.BatchClearValuesRequest;
 import com.google.api.services.sheets.v4.model.BatchClearValuesResponse;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateValuesResponse;
+import com.google.api.services.sheets.v4.model.GridRange;
+import com.google.api.services.sheets.v4.model.Request;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.UpdateCellsRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.moneyapps.ExpenseEdit.DATE_FINAL_FORMAT;
 import static com.example.moneyapps.TabFragment.TabHome.Totalsum;
+import java.util.regex.*;
+
 
 /**
  * Created by mario on 29/11/2016.
@@ -92,16 +109,20 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
     private static final String[] SCOPES_DRIVE = { DriveScopes.DRIVE_METADATA_READONLY };
     private static boolean Select_API = false; // False: DRIVE; True: SHEETS
 
+    private static List<String> Sheets_list;
+    private static List<String> Sheets_Id;
+    private static boolean Retrieve_Save = true;
     // Info Spreadsheet
-    private static final String spreadsheetId = "128ht2Igh9xGTT1T7Q6D_dSpNsOT2gISE9WVr8Sv8VGw";
-    private static final String range = "A1:G";
+    private static String spreadsheetId;
+    private static final String range = "A1:F";
+    private static final String range_read = "A2:F";
 
     private DataBaseAdapter mDbHelper;
 
     public TabSettings(DataBaseAdapter mDbHelper) {
         this.mDbHelper = mDbHelper;
     }
-
+// TODO SET THE TYPE OF THE COLUMNS AT THE BEGINING
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -124,22 +145,14 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
             case "pref_sync":
                 boolean sync_value = sharedPreferences.getBoolean(key, false);
                 if (sync_value) {
-                    // TODO SELECTION AND LINK WITH SPREASHEET ID
+
                     // DRIVE API to choose the spreadsheet
                     // Initialize credentials and service object.
                     Select_API = false;
                     mCredential = GoogleAccountCredential.usingOAuth2(
                             getContext(), Arrays.asList(SCOPES_DRIVE))
                             .setBackOff(new ExponentialBackOff());
-                    getResultsFromApi();
-
-                    // SHEET API to retrieve or update spreadsheet
-                    // Initialize credentials and service object.
-                    Select_API = true;
-                    mCredential = GoogleAccountCredential.usingOAuth2(
-                            getContext(), Arrays.asList(SCOPES_SHEETS))
-                            .setBackOff(new ExponentialBackOff());
-                    getResultsFromApi();
+                        getResultsFromApi();
                 }
                 break;
             case "home_choice":
@@ -432,15 +445,22 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         private List<String> getDataFromApi() throws IOException {
             // Get a list of up to 10 files.
             List<String> fileInfo = new ArrayList<String>();
+            Sheets_list = new ArrayList<String>();
+            Sheets_Id = new ArrayList<String>();
             FileList result = mService.files().list()
                     .setPageSize(10)
-                    .setFields("nextPageToken, files(id, name)")
+                    .setFields("nextPageToken, files(id, name, mimeType)")
                     .execute();
             List<File> files = result.getFiles();
             if (files != null) {
                 for (File file : files) {
-                    fileInfo.add(String.format("%s (%s)\n",
-                            file.getName(), file.getId()));
+                    // Test if file is a spreadsheet
+                    if (file.getMimeType().equals("application/vnd.google-apps.spreadsheet")){
+                        fileInfo.add(String.format("%s (%s)\n",
+                                file.getName(), file.getId()));
+                        Sheets_list.add(file.getName());
+                        Sheets_Id.add(file.getId());
+                    }
                 }
             }
             return fileInfo;
@@ -460,6 +480,41 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 //TODO REMOVE ?
                 output.add(0, "Data retrieved using the Drive API:");
                 System.out.println(TextUtils.join("\n", output));
+
+                // Create Select box
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Choose your Spreadsheet");
+                builder.setItems(Sheets_list.toArray(new CharSequence[Sheets_list.size()]), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Set spreadsheets Id
+                        spreadsheetId = Sheets_Id.get(which);
+
+                        // Create Select box
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("What you want to do ?");
+                        CharSequence Possible_choice[] = {"Retrieve the data","Save the data"};
+                        builder.setItems(Possible_choice, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Set Choice
+                                if (which==0)
+                                    Retrieve_Save = false;
+                                else
+                                    Retrieve_Save = true;
+                                // SHEET API to retrieve or update spreadsheet
+                                // Initialize credentials and service object.
+                                Select_API = true;
+                                mCredential = GoogleAccountCredential.usingOAuth2(
+                                        getContext(), Arrays.asList(SCOPES_SHEETS))
+                                        .setBackOff(new ExponentialBackOff());
+                                getResultsFromApi();
+                            }
+                        });
+                        builder.show();
+                    }
+                });
+                builder.show();
             }
         }
 
@@ -509,11 +564,16 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         @Override
         protected List<String> doInBackground(Void... params) {
             try {
-                // TODO
-                // Save data
-                setDataFromApi();
-                // Plot data save
-                return getDataFromApi();
+                List<String> data = new ArrayList<>();
+                if (Retrieve_Save) {
+                    // Save data
+                    setDataFromApi();
+                    // TODO FINIR
+                    data.add("Saved");
+                }else {
+                    data = getDataFromApi();
+                }
+                return data;
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
@@ -529,24 +589,28 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
         private List<String> getDataFromApi() throws IOException {
             List<String> results = new ArrayList<String>();
-            // TODO LINK TO THE DATABASE (generate rowId and cut date)
+            // LINK TO THE DATABASE
+            mDbHelper.deleteAllExpense();
+
             ValueRange response = this.mService.spreadsheets().values()
-                    .get(spreadsheetId, range)
+                    .get(spreadsheetId, range_read)
                     .execute();
             List<List<Object>> values = response.getValues();
             if (values != null) {
-                //results.add("_id - Retail - Date - Place - Amount - Category - Place");
                 for (List row : values) {
                     results.add(row.get(0) + "\t" + row.get(1)+ "\t" + row.get(2)+"\t" + row.get(3)+
-                            "\t" + row.get(4)+ "\t" + row.get(5)+ "\t" + row.get(6));
+                            "\t" + row.get(4)+ "\t" + row.get(5)+ "\t");
+                    // TODO PB WITH DATE AND AMOUNT
+                    mDbHelper.createExpense(row.get(0).toString(), row.get(1).toString(),row.get(2).toString(),
+                            row.get(5).toString(),row.get(3).toString(), row.get(4).toString());
                 }
             }
+            display_msg("Data retrieved");
             return results;
         }
 
         private boolean setDataFromApi() throws IOException {
             boolean flag = false;
-            // Update value :
             try {
                 List<List<Object>> arrData = setData();
 
@@ -556,19 +620,27 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 List<ValueRange> oList = new ArrayList<>();
                 oList.add(oRange);
 
-                // TODO Clear all test ?
-                //BatchClearValuesRequest oRequest_clear = new BatchClearValuesRequest();
-                //oRequest_clear.getRanges(range);
-                this.mService.spreadsheets().get(spreadsheetId).clear();
-                //BatchClearValuesResponse oResp_clear = this.mService.spreadsheets().values().batchClear(spreadsheetId, oRequest_clear).execute();
+                List<Request> requests = new ArrayList<>();
+                // CLEAR REQUEST
+                requests.add(new Request().setUpdateCells(new UpdateCellsRequest()
+                        .setRange(new GridRange().setSheetId(0))
+                        .setFields("*")));
 
-                // Update
-                BatchUpdateValuesRequest oRequest_update = new BatchUpdateValuesRequest();
-                oRequest_update.setValueInputOption("RAW").setData(oList);
-                BatchUpdateValuesResponse oResp_update = this.mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest_update).execute();
+                BatchUpdateSpreadsheetRequest body =
+                        new BatchUpdateSpreadsheetRequest().setRequests(requests);
+
+                BatchUpdateSpreadsheetResponse response =
+                        mService.spreadsheets().batchUpdate(spreadsheetId, body).execute();
+
+                // UPDATE REQUEST
+                BatchUpdateValuesRequest oRequest_update = new BatchUpdateValuesRequest().
+                        setValueInputOption("RAW").setData(oList);
+
+                BatchUpdateValuesResponse oResp_update =
+                        mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest_update).execute();
 
                 flag = true;
-                display_msg("Save to Google sheet");
+                display_msg("Data saved");
             } catch (IOException e) {
                 display_msg("Sheets failed");
                 Log.v("Sheets failed", String.valueOf(e));
@@ -576,18 +648,17 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
             return flag;
         }
 
+        @TargetApi(Build.VERSION_CODES.N)
         public List<List<Object>> setData ()  {
             // Describe Row
             List<List<Object>> data = new ArrayList<List<Object>>();
-            // TODO REMOVE KEY ROW ID
             List<Object> dataTitle = new ArrayList<Object>();
-            dataTitle.add(mDbHelper.KEY_ROWID);
             dataTitle.add(mDbHelper.KEY_RETAIL);
             dataTitle.add(mDbHelper.KEY_DATE);
             dataTitle.add(mDbHelper.KEY_PLACE);
-            dataTitle.add(mDbHelper.KEY_AMOUNT);
             dataTitle.add(mDbHelper.KEY_CATOGORY);
             dataTitle.add(mDbHelper.KEY_TAG);
+            dataTitle.add(mDbHelper.KEY_AMOUNT);
             data.add(dataTitle);
 
             // link the database
@@ -597,13 +668,12 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 while (!expenseCursor.isAfterLast()) {
                     // Describe columns for one row
                     List<Object> dataRow = new ArrayList<Object>();
-                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_ROWID)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_RETAIL)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_DATE)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_PLACE)));
-                    dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_CATOGORY)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_TAG)));
+                    dataRow.add(Double.parseDouble(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT))));
 
                     data.add(dataRow);
                     expenseCursor.moveToNext();

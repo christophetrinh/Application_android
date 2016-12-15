@@ -129,6 +129,10 @@ public class DataBaseAdapter {
         return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
+    public boolean deleteAllExpense() {
+        return mDb.delete(DATABASE_TABLE, null, null) > 0;
+    }
+
     public Cursor fetchAllExpense() {
         //query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
         return mDb.query(
