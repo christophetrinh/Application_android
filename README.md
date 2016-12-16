@@ -17,7 +17,8 @@ A floatting menu in the bottom right hand corner permits to the user to add an e
 - **Manually** : A new activity will appear with all field empty. Thus, the user can manually entered the corresponding data into each field.
 - **Automatically** : A camera activity will appear in order to retrieve information directly from a reciept. Firslty, present a receipt in front of the camera, then the *date* and the *amount* should be deteteced and should appear on the display. When this two fields are detected and displayed, click on the button *capture done*. Then an activity will appear with the *date* and *amount* fields filled. We also implement a geolocalisation, in background process, which allows to detect your current location in order to fill the *place* field on the expense edit activity.
 
-Information on each expense :  
+Information on each expense : 
+ 
 | Field | Description |  
 |-------|:------------|  
 | *Retail* | The name of the retail or company. |  
