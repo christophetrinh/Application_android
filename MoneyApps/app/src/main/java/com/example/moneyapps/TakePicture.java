@@ -273,15 +273,16 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         }
     }
 
+    /**
+     * Method to create a new form with the detected amount and date through
+     * the camera.
+     */
+
     public void newForm(View view) {
         Intent i = new Intent(this, ExpenseEdit.class);
         i.putExtra("take_picture", true);
         i.putExtra("amount", lastValidAmount);
         i.putExtra("date",lastValidDate);
-
         startActivityForResult(i, ACTIVITY_CREATE);
     }
-
-
 }
-
