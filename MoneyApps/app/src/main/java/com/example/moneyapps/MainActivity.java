@@ -55,7 +55,6 @@ public class MainActivity extends ActionBarActivity {
         actionA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //actionA.setTitle("Action A clicked");
                 Log.v("Button", "Clik on button A");
                 takePicture();
                 // Close Menu
@@ -68,7 +67,6 @@ public class MainActivity extends ActionBarActivity {
         actionB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //actionB.setTitle("Action B clicked");
                 Log.v("Button", "Clik on button B");
                 createForm();
                 debugDatabase();
@@ -78,14 +76,12 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        //5 onglets
+        //5 tabs
         final int tabCount = 5;
 
-        //les vues définies dans @layout/header_logo
         headerLogo = findViewById(R.id.headerLogo);
         headerLogoContent = (ImageView) findViewById(R.id.headerLogoContent);
 
-        //le MaterialViewPager
         this.materialViewPager = (MaterialViewPager) findViewById(R.id.materialViewPager);
         this.materialViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
@@ -118,7 +114,7 @@ public class MainActivity extends ActionBarActivity {
                 return tabCount;
             }
 
-            //le titre à afficher pour chaque page
+            //display the title for each tab
             @Override
             public CharSequence getPageTitle(int position) {
                 switch (position) {
@@ -143,11 +139,11 @@ public class MainActivity extends ActionBarActivity {
             public void setPrimaryItem(ViewGroup container, int position, Object object) {
                 super.setPrimaryItem(container, position, object);
 
-                //seulement si la page est différente
+                //only if the page is different
                 if (oldItemPosition != position) {
                     oldItemPosition = position;
 
-                    //définir la nouvelle couleur et les nouvelles images
+                    //define new color and new image
                     String imageUrl = null;
                     int color = Color.BLACK;
                     Drawable newDrawable = null;
@@ -180,20 +176,19 @@ public class MainActivity extends ActionBarActivity {
                             break;
                     }
 
-                    //puis modifier les images/couleurs
+                    //modify image and color
                     int fadeDuration = 200;
                     materialViewPager.setColor(color, fadeDuration);
                     materialViewPager.setImageUrl(imageUrl, fadeDuration);
                     toggleLogo(newDrawable, color, fadeDuration);
-
                 }
             }
         });
 
 
-        //permet au viewPager de garder 4 pages en mémoire (à ne pas utiliser sur plus de 4 pages !)
+        //keep the 5tabs in memory
         this.materialViewPager.getViewPager().setOffscreenPageLimit(tabCount);
-        //relie les tabs au viewpager
+        //link the 5 tabs to the viewpager
         this.materialViewPager.getPagerTitleStrip().setViewPager(this.materialViewPager.getViewPager());
 
 
@@ -210,19 +205,16 @@ public class MainActivity extends ActionBarActivity {
         Cursor expenseCursor = mDbHelper.fetchAllExpense();
         if (expenseCursor != null) {
             // Print
-            Log.v("DataBase Columns: ", Arrays.toString(expenseCursor.getColumnNames()));
-            Log.v("DataBase rows number:", String.valueOf(expenseCursor.getCount()));
+            Log.v(TAG, "DataBase Columns: " + Arrays.toString(expenseCursor.getColumnNames()));
+            Log.v(TAG, "DataBase rows number:" + String.valueOf(expenseCursor.getCount()));
 
             expenseCursor.moveToFirst();
             while(!expenseCursor.isAfterLast()) {
-                // Print only retail
-                //Log.v("DataBase retail:", String.valueOf(expenseCursor.getString(expenseCursor.getColumnIndex("Retail"))));
-                // Print all
                 StringBuilder row = new StringBuilder();
                 for(int i = 0; i < expenseCursor.getColumnNames().length; i++){
                     row.append(expenseCursor.getString(i)+" ");
                 }
-                Log.v("DataBase row:", row.toString());
+                Log.v(TAG, "DataBase row:"+row.toString());
                 expenseCursor.moveToNext();
             }
         }
@@ -230,7 +222,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void toggleLogo(final Drawable newLogo, final int newColor, int duration) {
 
-        //animation de disparition
+        //disappearing animation
         final AnimatorSet animatorSetDisappear = new AnimatorSet();
         animatorSetDisappear.setDuration(duration);
         animatorSetDisappear.playTogether(
@@ -238,7 +230,7 @@ public class MainActivity extends ActionBarActivity {
                 ObjectAnimator.ofFloat(headerLogo, "scaleY", 0)
         );
 
-        //animation d'apparition
+        //appearing animation
         final AnimatorSet animatorSetAppear = new AnimatorSet();
         animatorSetAppear.setDuration(duration);
         animatorSetAppear.playTogether(
@@ -246,33 +238,40 @@ public class MainActivity extends ActionBarActivity {
                 ObjectAnimator.ofFloat(headerLogo, "scaleY", 1)
         );
 
-        //après la disparition
+        //after the disappearing
         animatorSetDisappear.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
 
-                //modifie la couleur du cercle
+                //modify the color image
                 ((GradientDrawable) headerLogo.getBackground()).setColor(newColor);
 
-                //modifie l'image contenue dans le cercle
+                //modify the logo
                 headerLogoContent.setImageDrawable(newLogo);
 
-                //démarre l'animation d'apparition
+                //start the new annimation
                 animatorSetAppear.start();
             }
         });
 
-        //démarre l'animation de disparition
+        //start the disappearing animation
         animatorSetDisappear.start();
     }
 
+
+    /**
+     * create the new form manually
+     */
     private void createForm() {
         Intent i = new Intent(this, ExpenseEdit.class);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
 
+    /**
+     * take a picture
+     */
     private void takePicture() {
         Intent i = new Intent(this, TakePicture.class);
         startActivityForResult(i, ACTIVITY_CREATE);
