@@ -19,7 +19,7 @@ A floatting menu in the bottom right hand corner permits to the user to add an e
 
 Information on each expense :  
 | Field | Description |  
-|---------|:-------------|  
+|-------|:------------|  
 | *Retail* | The name of the retail or company. |  
 | *Date* | The date of the expense. |  
 | *Place* | The city where purchase has been done. |  
