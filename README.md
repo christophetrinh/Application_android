@@ -2,12 +2,12 @@
 
 ### Introduction
 
-Manage your money expense in a better way with MoneyApps!
+Manage your money expenses in a better way with MoneyApps!
 This Android application enables user to track his expenses all around the world by scanning receipt. Simple and intuitive, Money App provides responsive data visualization by filtering annual/monthly/daily expenses. Additionally, it displays a table grouping all expenses by tag or category. The application is made with a particular attention to provides a simple, intuitive and efficient way to manage expenses.
 
 ### Implementation
 
-We will use several library, for instance OCR library by [Mobile Vision](https://developers.google.com/vision/) in order to extract information on the receipt. Moreover, we give the possibility to the user to fill the form manually. We add also a location based service with a map that shows the expenses on each country. Additionnaly, the user can synchronize his a google account in order to retrieve or store the data expenses in a spreadsheet.
+We will use several library, for instance OCR library by [Mobile Vision](https://developers.google.com/vision/) in order to extract information on the receipt. Moreover, we give the possibility to the user to fill the form manually. We add also a location based service with a map that shows the expenses on each country. Additionnaly, the user can synchronize his google account in order to retrieve or store the data expenses in a spreadsheet.
 
 ### Interface descritpion
 
@@ -15,7 +15,7 @@ We opt for an interface which provides several swipe tabs in order to make intui
 
 A floating menu in the bottom right hand corner permits to the user to add an expense :
 - **Manually** : A new activity will appear with all fields empty. Thus, the user can manually enter the corresponding data into each field.
-- **Automatically** : A camera activity will appear in order to retrieve information directly from a receipt. Firslty, present a receipt in front of the camera, then the *date* and the *amount* should be detected and should appear on the display. When these two fields are detected and displayed, click on the button *capture done*. Then an activity will appear with the *date* and *amount* fields filled. We also implement a geolocalisation, in a background process, which allows to detect your current location in order to fill the *place* field on the expense edit activity.
+- **Automatically** : A camera activity will appear in order to retrieve information directly from a receipt. Firstly, present a receipt in front of the camera, then the *date* and the *amount* should be detected and should appear on the display. If date and amount are detected, a form will automatically appear with the corresponding *amount* and *date*. If only one is detected, the user is free to click on the button *capture done*, if the detection has not detected both. Then the form will appear with the field detected filled. We also implement a geolocalisation, in a background process, which allows to detect your current location in order to fill the *place* field on the expense edit activity.
 
 Information on each expense : 
  
@@ -29,7 +29,7 @@ Information on each expense :
 | *Tag* | The tag that match to a specific project (travel, study ...). |  
 
 The application provides the following tabs :
-- **Home** : This tab provides a simple sentence which resumed the total amount spent today/month/year (choose your preference in tab settings). It gives also an overview of the percentage of the amount spent depending on *Category* or *Tag* field (choose your preference in tab settings) through a pie chart.
+- **Home** : This tab provides a simple sentence which resumes the total amount spent today/month/year (choose your preference in tab settings). It gives also an overview of the percentage of the amount spent depending on *Category* or *Tag* field (choose your preference in tab settings) through a pie chart.
 - **Table** : It enables users to display all their expenses in a simple way. It gives the possibility to edit expense by a long press on it and refresh the table after any edit intervention by a swipe down. You can sort the table by clicking on the corresponding field on the title row.
 - **Visualization** : Through this tab, you can easily see the amount spent by year and for each month. The bar chart on the bottom shows the total amount spent in each year and the line chart on the top displays the amount spent on each month for the selected year (by a click on the bar chart on a specific year).
 - **Map** : This tab allows the user to have an overview of his expenses around the world. Different markers on the map give the total amount spent in each city where the user spent money.
