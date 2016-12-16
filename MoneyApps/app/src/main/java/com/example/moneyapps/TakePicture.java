@@ -13,8 +13,6 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,10 +20,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.moneyapps.ui.camera.CameraSourcePreview;
@@ -37,11 +32,6 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
-import java.util.Locale;
-
-/**
- * Created by trinh on 22/11/16.
- */
 
 public class TakePicture extends AppCompatActivity{ private static final String TAG = "OcrCaptureActivity";
 
@@ -84,10 +74,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
 
         Button myButton = new Button(this);
         myButton.findViewById(R.id.button_capture);
-
-
-
-
         Toast.makeText(this, R.string.present_ticket, Toast.LENGTH_LONG).show();
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -102,9 +88,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
             requestCameraPermission();
         }
 
-        gestureDetector = new GestureDetector(this, new CaptureGestureListener());
-        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
-
     }
 
     public void updateData(String amount) {
@@ -116,11 +99,8 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         Log.e("Date received", "Date = "+lastValidDate);
     }
 
-
     /**
-     * Handles the requesting of the camera permission.  This includes
-     * showing a "Snackbar" message of why the permission is needed then
-     * sending the request.
+     * Handles the requesting of the camera permission.
      */
     private void requestCameraPermission() {
         Log.w(TAG, "Camera permission is not granted. Requesting permission");
@@ -137,17 +117,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
 
         ActivityCompat.requestPermissions(thisActivity, permissions,
                 RC_HANDLE_CAMERA_PERM);
-    }
-
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        boolean b = scaleGestureDetector.onTouchEvent(e);
-
-        boolean c = gestureDetector.onTouchEvent(e);
-
-        return b || c || super.onTouchEvent(e);
     }
 
     /**
@@ -170,15 +139,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         textRecognizer.setProcessor(new OcrDetectorProcessor(mGraphicOverlay, this));
 
         if (!textRecognizer.isOperational()) {
-            // Note: The first time that an app using a Vision API is installed on a
-            // device, GMS will download a native libraries to the device in order to do detection.
-            // Usually this completes before the app is run for the first time.  But if that
-            // download has not yet completed, then the above call will not detect any text,
-            // barcodes, or faces.
-            //
-            // isOperational() can be used to check if the required native libraries are currently
-            // available.  The detectors will automatically become operational once the library
-            // downloads complete on device.
             Log.w(TAG, "Detector dependencies are not yet available.");
 
             // Check for low storage.  If there is low storage, the native library will not be
@@ -313,31 +273,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         }
     }
 
-    /**
-     * onTap is called to speak the tapped TextBlock, if any, out loud.
-     *
-     * @param rawX - the raw position of the tap
-     * @param rawY - the raw position of the tap.
-     * @return true if the tap was on a TextBlock
-     */
-    private boolean onTap(float rawX, float rawY) {
-        OcrGraphic graphic = mGraphicOverlay.getGraphicAtLocation(rawX, rawY);
-        TextBlock text = null;
-        if (graphic != null) {
-            text = graphic.getTextBlock();
-            if (text != null && text.getValue() != null) {
-                Log.d(TAG, "text data is being spoken! " + text.getValue());
-            }
-            else {
-                Log.d(TAG, "text data is null");
-            }
-        }
-        else {
-            Log.d(TAG,"no text detected");
-        }
-        return text != null;
-    }
-
     public void newForm(View view) {
         Intent i = new Intent(this, ExpenseEdit.class);
         i.putExtra("take_picture", true);
@@ -345,71 +280,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         i.putExtra("date",lastValidDate);
 
         startActivityForResult(i, ACTIVITY_CREATE);
-    }
-
-
-    private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
-        }
-    }
-
-    private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
-
-        /**
-         * Responds to scaling events for a gesture in progress.
-         * Reported by pointer motion.
-         *
-         * @param detector The detector reporting the event - use this to
-         *                 retrieve extended info about event state.
-         * @return Whether or not the detector should consider this event
-         * as handled. If an event was not handled, the detector
-         * will continue to accumulate movement until an event is
-         * handled. This can be useful if an application, for example,
-         * only wants to update scaling factors if the change is
-         * greater than 0.01.
-         */
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            return false;
-        }
-
-        /**
-         * Responds to the beginning of a scaling gesture. Reported by
-         * new pointers going down.
-         *
-         * @param detector The detector reporting the event - use this to
-         *                 retrieve extended info about event state.
-         * @return Whether or not the detector should continue recognizing
-         * this gesture. For example, if a gesture is beginning
-         * with a focal point outside of a region where it makes
-         * sense, onScaleBegin() may return false to ignore the
-         * rest of the gesture.
-         */
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            return true;
-        }
-
-        /**
-         * Responds to the end of a scale gesture. Reported by existing
-         * pointers going up.
-         * <p/>
-         * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}
-         * and {@link ScaleGestureDetector#getFocusY()} will return focal point
-         * of the pointers remaining on the screen.
-         *
-         * @param detector The detector reporting the event - use this to
-         *                 retrieve extended info about event state.
-         */
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            if (mCameraSource != null) {
-                mCameraSource.doZoom(detector.getScaleFactor());
-            }
-        }
     }
 
 
