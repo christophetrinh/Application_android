@@ -112,13 +112,7 @@ public class MainActivity extends ActionBarActivity {
                         return null;
                 }
             }
-            /*
-            @Override
-            public Fragment getItem(int position) {
-                //je créé pour chaque onglet un RecyclerViewFragment
-                return RecyclerViewFragment.newInstance();
-            }
-            */
+
             @Override
             public int getCount() {
                 return tabCount;
