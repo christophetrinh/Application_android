@@ -87,13 +87,5 @@
             android:layout_height="wrap_content"
             android:text="@string/confirmButton"
             android:background="@color/green" />
-<!--
-        <Button
-            android:id="@+id/remove"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/removeButton"
-            android:background="@color/red" />
-        -->
     </LinearLayout>
 </LinearLayout>
