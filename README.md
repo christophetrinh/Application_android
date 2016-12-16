@@ -51,5 +51,5 @@ References :
 - [Hello Charts](https://github.com/lecho/hellocharts-android)
 - [Table View](https://github.com/ISchwarz23/SortableTableView)
 
-Please feel free to contact us if you have any problem.
+Please feel free to contact us if you have any problem.  
 Created by [@christophetrinh](https://github.com/christophetrinh) and [@marioviola](https://github.com/marioviola)
