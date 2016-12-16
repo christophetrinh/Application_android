@@ -1,12 +1,9 @@
 package com.example.moneyapps.data;
 
 import android.database.Cursor;
-import android.util.Log;
-
 import com.example.moneyapps.DataBaseAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

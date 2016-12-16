@@ -1,11 +1,8 @@
 package com.example.moneyapps.TabFragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +17,8 @@ import com.example.moneyapps.SortableExpenseTableView;
 import com.example.moneyapps.data.DataExpenses;
 import com.example.moneyapps.data.Expense;
 
-import java.io.Serializable;
-
 import de.codecrafters.tableview.listeners.SwipeToRefreshListener;
-import de.codecrafters.tableview.listeners.TableDataClickListener;
 import de.codecrafters.tableview.listeners.TableDataLongClickListener;
-
-import static android.R.attr.id;
-
-/**
- * Created by trinh on 23/11/16.
- */
 
 public class TabTable extends Fragment {
 

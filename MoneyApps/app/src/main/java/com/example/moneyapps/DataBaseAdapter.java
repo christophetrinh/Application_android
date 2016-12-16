@@ -335,5 +335,5 @@ public class DataBaseAdapter {
         }
         return Amount;
     }
-    
+
 }

@@ -3,13 +3,10 @@ package com.example.moneyapps.TabFragment;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,29 +15,16 @@ import android.view.ViewGroup;
 
 import com.example.moneyapps.DataBaseAdapter;
 import com.example.moneyapps.R;
-
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.example.moneyapps.DataBaseAdapter.KEY_AMOUNT;
-import static com.example.moneyapps.DataBaseAdapter.KEY_PLACE;
-
 
 @SuppressLint("ValidFragment")
 public class TabMap extends Fragment implements OnMapReadyCallback {
@@ -128,8 +112,6 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
 
             dataCursor.moveToFirst();
             while (!dataCursor.isAfterLast()) {
-                // Print only retail
-                //Log.v("DataBase retail:", String.valueOf(expenseCursor.getString(expenseCursor.getColumnIndex("Retail"))));
                 // Print all
                 StringBuilder row = new StringBuilder();
                 for (int i = 0; i < dataCursor.getColumnNames().length; i++) {
@@ -146,12 +128,9 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
 
         // Extract data from database
         List<ExpenseMap> PlaceAmount = ExtractFromDataBase(this.mDbHelper);
-        // Print data
-        //Log.v("Place amount",PlaceAmount.toString());
         // Search from a city name
         Geocoder geocode = new Geocoder(getContext());
         for (int i = 0; i < PlaceAmount.size(); i++) {
-            //System.out.println(PlaceAmount.get(i).getPlace());
             if (!PlaceAmount.get(i).getPlace().equals("Empty") & !PlaceAmount.get(i).getPlace().equals("empty")) {
                 geocodeAddress(PlaceAmount.get(i).getPlace(), PlaceAmount.get(i).getAmount(), geocode, mMap);
             }

@@ -14,7 +14,6 @@ import com.example.moneyapps.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -28,10 +27,6 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.LineChartView;
-
-/**
- * Created by mario on 29/11/2016.
- */
 
 @SuppressLint("ValidFragment")
 public class TabViz extends Fragment {

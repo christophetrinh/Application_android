@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +24,6 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.PieChartView;
 
-/**
- * Created by mario on 29/11/2016.
- */
-
 @SuppressLint("ValidFragment")
 public class TabHome extends Fragment {
     private PieChartView chart;
@@ -44,9 +39,6 @@ public class TabHome extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         PreferenceManager.setDefaultValues(getContext(), R.xml.preferences, false);
-        SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String sentence;
-        String amount;
         View v;
         v= inflater.inflate(R.layout.home_fragment, container, false);
 
@@ -75,7 +67,6 @@ public class TabHome extends Fragment {
     public void updateDataPiechart() {
 
         List<ExpenseCategory> CategoryAmount = ExtractFromDataBase(this.mDbHelper);
-        //System.out.println("Cate"+CategoryAmount.size());
         double sum = Totalsum(CategoryAmount);
         List<SliceValue> values = new ArrayList<SliceValue>();
         for (ExpenseCategory expense : CategoryAmount) {
@@ -158,7 +149,6 @@ public class TabHome extends Fragment {
 
         @Override
         public void onValueSelected(int arcIndex, SliceValue value) {
-            //Toast.makeText(getActivity(), "Selected: " + value, Toast.LENGTH_SHORT).show();
 
             data.setCenterText1(String.valueOf(((int) value.getValue()))+" %");
 
