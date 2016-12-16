@@ -11,13 +11,9 @@ import com.google.android.gms.vision.text.TextBlock;
 
 import java.util.List;
 
-/**
- * Created by trinh on 22/11/16.
- */
 public class OcrGraphic extends GraphicOverlay.Graphic {
 
     private int mId;
-
     private static final int TEXT_COLOR = Color.WHITE;
 
     private static Paint sRectPaint;
@@ -51,10 +47,6 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
 
     public void setId(int id) {
         this.mId = id;
-    }
-
-    public TextBlock getTextBlock() {
-        return mText;
     }
 
     /**
