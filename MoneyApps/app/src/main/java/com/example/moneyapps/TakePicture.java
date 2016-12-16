@@ -99,6 +99,16 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         Log.e("Date received", "Date = "+lastValidDate);
     }
 
+    // if both amount and data were detected, directly launch the creation of the form
+    public void updatebool(boolean b) {
+        if (b) {
+            Intent i = new Intent(this, ExpenseEdit.class);
+            i.putExtra("take_picture", true);
+            i.putExtra("amount", lastValidAmount);
+            i.putExtra("date",lastValidDate);
+            startActivityForResult(i, ACTIVITY_CREATE);
+        }
+    }
     /**
      * Handles the requesting of the camera permission.
      */
@@ -275,7 +285,7 @@ public class TakePicture extends AppCompatActivity{ private static final String 
 
     /**
      * Method to create a new form with the detected amount and date through
-     * the camera.
+     * the camera while clicking on the button "Capture Done".
      */
 
     public void newForm(View view) {
@@ -285,4 +295,6 @@ public class TakePicture extends AppCompatActivity{ private static final String 
         i.putExtra("date",lastValidDate);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
+
+
 }
