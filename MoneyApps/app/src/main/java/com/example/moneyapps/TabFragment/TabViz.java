@@ -72,6 +72,7 @@ public class TabViz extends Fragment {
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
+        years.clear();
 
         // Retrieve amount by year
         Cursor dataCursor = mDb.groupbyYear();
@@ -85,7 +86,6 @@ public class TabViz extends Fragment {
                 axisValues.add(new AxisValue(i).setLabel(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))));
 
                 years.add(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))));
-
                 columns.add(new Column(values).setHasLabelsOnlyForSelected(true));
 
                 dataCursor.moveToNext();
@@ -167,7 +167,7 @@ public class TabViz extends Fragment {
             if (dataCursor != null) {
                 dataCursor.moveToFirst();
                 while (!dataCursor.isAfterLast()) {
-                    if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) == this.years.get(columnIndex)) {
+                    if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) == this.years.get(columnIndex)) {                    System.out.println(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))));
                         //Retrieve month info
                         PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1);
                         value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1,
@@ -204,6 +204,7 @@ public class TabViz extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        generateInitialLineData();
         updateColumnData(this.mDbHelper);
     }
 

@@ -20,6 +20,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import com.example.moneyapps.DataBaseAdapter;
+import com.example.moneyapps.data.DataExpenses;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import com.example.moneyapps.R;
@@ -539,8 +541,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 if (Retrieve_Save) {
                     // Save data
                     setDataFromApi();
-                    // TODO FINIR
-                    data.add("Saved");
+                    data.add("Data saved");
                 }else {
                     data = getDataFromApi();
                 }
@@ -571,7 +572,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 for (List row : values) {
                     results.add(row.get(0) + "\t" + row.get(1)+ "\t" + row.get(2)+"\t" + row.get(3)+
                             "\t" + row.get(4)+ "\t" + row.get(5)+ "\t");
-                    // TODO PB WITH DATE AND AMOUNT
+
                     mDbHelper.createExpense(row.get(0).toString(), row.get(1).toString(),row.get(2).toString(),
                             row.get(5).toString(),row.get(3).toString(), row.get(4).toString());
                 }
@@ -667,6 +668,27 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 // TODO REMOVE ?
                 output.add(0, "Data retrieved using the Google Sheets API:");
                 System.out.println(TextUtils.join("\n", output));
+                // MAJ ALL TAB
+                List<Fragment> fragList = getFragmentManager().getFragments();
+                for(Fragment f: fragList) {
+                    if(f.getClass() == TabMap.class) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(f).attach(f).commit();
+                    }
+                    if(f.getClass() == TabViz.class) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(f).attach(f).commit();
+                    }
+                    if(f.getClass() == TabHome.class) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(f).attach(f).commit();
+                    }
+                    if(f.getClass() == TabTable.class) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(f).attach(f).commit();
+                    }
+                }
+
             }
         }
 

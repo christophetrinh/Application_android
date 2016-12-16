@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.moneyapps.DataBaseAdapter;
+import com.example.moneyapps.MainActivity;
 import com.example.moneyapps.R;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class TabHome extends Fragment {
 
     public void updateDataPiechart() {
 
-        List<ExpenseCategory> CategoryAmount = ExtractFromDataBase(this.mDbHelper);
+        List<ExpenseCategory> CategoryAmount = ExtractFromDataBase(mDbHelper);
         double sum = Totalsum(CategoryAmount);
         List<SliceValue> values = new ArrayList<SliceValue>();
         for (ExpenseCategory expense : CategoryAmount) {

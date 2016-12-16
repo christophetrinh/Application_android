@@ -3,6 +3,8 @@ package com.example.moneyapps.TabFragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,8 @@ import com.example.moneyapps.R;
 import com.example.moneyapps.SortableExpenseTableView;
 import com.example.moneyapps.data.DataExpenses;
 import com.example.moneyapps.data.Expense;
+
+import java.util.List;
 
 import de.codecrafters.tableview.listeners.SwipeToRefreshListener;
 import de.codecrafters.tableview.listeners.TableDataLongClickListener;
@@ -76,6 +80,14 @@ public class TabTable extends Fragment {
         expenseTableDataAdapter.getData().clear();
         expenseTableDataAdapter.getData().addAll(DataExpenses.UpdateDataBaseExpenseList(mDbHelper));
     }
+
+    public void update(DataBaseAdapter mDbHelper) {
+        // UPDATE TABLE
+        expenseTableDataAdapter.getData().clear();
+        expenseTableDataAdapter.getData().addAll(DataExpenses.UpdateDataBaseExpenseList(mDbHelper));
+        this.mDbHelper=mDbHelper;
+    }
+
 
     public void onPause() {
         super.onPause();
