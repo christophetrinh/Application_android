@@ -43,8 +43,13 @@ You can also try to add an expense manually or even automatically. We provide be
 
 [![Ticket-CB.png](https://s23.postimg.org/u121357bf/Ticket_CB.png)](https://postimg.org/image/5xb9euouf/)
 
-
 ## Credits
+
+References :
+- [OCR Mobile Vision](https://github.com/googlesamples/android-vision)
+- [View Pager](https://github.com/florent37/MaterialViewPager)
+- [Hello Charts](https://github.com/lecho/hellocharts-android)
+- [Table View](https://github.com/ISchwarz23/SortableTableView)
 
 Please feel free to contact us if you have any problem.
 Created by [@christophetrinh](https://github.com/christophetrinh) and [@marioviola](https://github.com/marioviola)
