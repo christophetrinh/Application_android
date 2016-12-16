@@ -47,4 +47,4 @@ You can also try to add an expense manually or even automatically. We provide be
 ## Credits
 
 Please feel free to contact us if you have any problem.
-Created by [Mario Viola](<mario_viola@hotmail.fr>) and [Christophe Trinh](<christophe.trinh.94@gmail.com>)
+Created by [@christophetrinh](https://github.com/christophetrinh) and [@marioviola](https://github.com/marioviola))
