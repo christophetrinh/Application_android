@@ -12,6 +12,7 @@
     <string name="amount">Amount</string>
     <string name="category">Category</string>
     <string name="tag">Tag</string>
+    <string name="expense">Expense Details</string>
 
     <string name="present_ticket">Please present a ticket</string>
     <string name="confirmButton">Save</string>
