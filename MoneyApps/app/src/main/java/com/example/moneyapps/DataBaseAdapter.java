@@ -6,16 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-/**
- * Created by mario on 15/11/2016.
- */
 
 public class DataBaseAdapter {
 
@@ -342,7 +335,5 @@ public class DataBaseAdapter {
         }
         return Amount;
     }
-
-
-
+    
 }
