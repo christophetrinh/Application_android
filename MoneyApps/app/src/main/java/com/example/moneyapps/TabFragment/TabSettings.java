@@ -532,6 +532,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 } else {
                     Log.e("DRIVE API", "The following error occurred:\n"
                             + mLastError.getMessage());
+                    Toast.makeText(getContext(), "Connection to the drive failed", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Log.e("DRIVE API", "Request cancelled.");
