@@ -18,14 +18,14 @@ A floatting menu in the bottom right hand corner permits to the user to add an e
 - **Automatically** : A camera activity will appear in order to retrieve information directly from a reciept. Firslty, present a receipt in front of the camera, then the *date* and the *amount* should be deteteced and should appear on the display. When this two fields are detected and displayed, click on the button *capture done*. Then an activity will appear with the *date* and *amount* fields filled. We also implement a geolocalisation, in background process, which allows to detect your current location in order to fill the *place* field on the expense edit activity.
 
 Information on each expense :
-| Field   | Description |
-|---------|:-------------|
-|*Retail* | The name of the retail or company.|
-| *Date* | The date of the expense.|
-| *Place* | The city where purchase has been done.|
-| *Amount* | The amount of the expense.|
-| *Category* | The category of the expenses (alimentation, transport ...).|
-| *Tag* | The tag that match to a specific project (travel, study ...).|
+| Field   | Description |  
+|---------|:-------------|  
+|*Retail* | The name of the retail or company.|  
+| *Date* | The date of the expense.|  
+| *Place* | The city where purchase has been done.|  
+| *Amount* | The amount of the expense.|  
+| *Category* | The category of the expenses (alimentation, transport ...).|  
+| *Tag* | The tag that match to a specific project (travel, study ...).|  
 
 The application provides the following tabs :
 - **Home** : This tab provides a simple sentence which resume the total amount spent today/month/year (choose your preference in tab settings). It gives also an overview of the percentage of amount spent depending on *Category* or *Tag* field (choose your preference in tab settings) through a pie chart.
