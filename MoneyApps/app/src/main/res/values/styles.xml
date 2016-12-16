@@ -7,7 +7,6 @@
     <style name="AppTheme" parent="AppBaseTheme">
 
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowTranslucentStatus" tools:targetApi="21">true</item>
         <item name="android:windowContentOverlay">@null</item>
 
@@ -15,9 +14,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <!-- Toolbar Theme / Apply white arrow -->
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="actionBarTheme">@style/AppTheme.ActionBarTheme</item>
 
         <!-- Material Theme Colors -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -34,19 +30,7 @@
 
     </style>
 
-    <!-- Couleur de la flèche dans la toolbar -->
-    <style name="AppTheme.ActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <!-- White arrow -->
-        <item name="colorControlNormal">@android:color/white</item>
-    </style>
-
-    <!-- Couleur de la flèche / burger menu dans la toolbar -->
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <item name="color">@color/drawerArrowColor</item>
-    </style>
-
-    <!-- Style du menu floating action point -->
+    <!-- floating action point menu style-->
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>

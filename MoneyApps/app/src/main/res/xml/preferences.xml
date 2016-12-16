@@ -19,6 +19,6 @@
         android:entries="@array/home_pie_preference"
         android:entryValues="@array/pie_preference"
         android:key="home_pie"
-        android:title="Choose the pie vizualisation in Home tab" />
+        android:title="Choose the pie visualisation in Home tab" />
 
 </PreferenceScreen>
