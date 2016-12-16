@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -27,12 +26,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import static android.R.attr.defaultValue;
-import static com.example.moneyapps.R.color.red;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -40,9 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by mario on 15/11/2016.
- */
 
 public class ExpenseEdit extends Activity {
 
@@ -212,15 +203,6 @@ public class ExpenseEdit extends Activity {
             ((ExpenseEdit) getActivity()).updateDateButtonText();
         }
     }
-
-    private void setRowIdFromIntent() {
-        if (mRowId == null) {
-            Bundle extras = getIntent().getExtras();
-            Log.v("Row id press :", String.valueOf(extras.getLong(DataBaseAdapter.KEY_ROWID)));
-            mRowId = extras != null ? extras.getLong(DataBaseAdapter.KEY_ROWID) : null;
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -274,7 +256,6 @@ public class ExpenseEdit extends Activity {
             Date date_format;
             try {
                 date_format = dateFormat.parse(date);
-                Log.e("VALUE", "LA VALEUR DANS FONCTION POP FIELDS EST: " + date_format);
                 mCalendar.setTime(date_format);
                 updateDateButtonText();
             } catch (ParseException e) {
@@ -283,44 +264,10 @@ public class ExpenseEdit extends Activity {
         }
     }
 
-    private String getLocation() {
-        String address = new String();
-        String context = Context.LOCATION_SERVICE;
-        locationManager = (LocationManager) getSystemService(context);
-        List<String> providers = locationManager.getProviders(true);
-        for(String provider: providers) {
-            locationManager.requestLocationUpdates(provider, 1000, 0, new
-                    LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-                        }
 
-                        @Override
-                        public void onStatusChanged(String provider, int status, Bundle
-                                extras) {
-                        }
-
-                        @Override
-                        public void onProviderEnabled(String provider) {
-                        }
-
-                        @Override
-                        public void onProviderDisabled(String provider) {
-                        }
-                    });
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) ==
-                    PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(provider);
-                if (location != null) {
-                    address = updateWithNewLocation(location);
-                }
-            }
-        }
-        return address;
-    }
-
-
+    /**
+     * Method to get the location while adding an expense manually
+     */
     private String getLocationBestProvider(){
         String full_address = new String();
         LocationManager locationManager;
