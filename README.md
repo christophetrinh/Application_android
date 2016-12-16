@@ -20,12 +20,12 @@ A floatting menu in the bottom right hand corner permits to the user to add an e
 Information on each expense :
 | Field   | Description |  
 |---------|:-------------|  
-|*Retail* | The name of the retail or company.|  
-| *Date* | The date of the expense.|  
-| *Place* | The city where purchase has been done.|  
-| *Amount* | The amount of the expense.|  
-| *Category* | The category of the expenses (alimentation, transport ...).|  
-| *Tag* | The tag that match to a specific project (travel, study ...).|  
+|*Retail* | The name of the retail or company. |  
+| *Date* | The date of the expense. |  
+| *Place* | The city where purchase has been done. |  
+| *Amount* | The amount of the expense. |  
+| *Category* | The category of the expenses (alimentation, transport ...). |  
+| *Tag* | The tag that match to a specific project (travel, study ...). |  
 
 The application provides the following tabs :
 - **Home** : This tab provides a simple sentence which resume the total amount spent today/month/year (choose your preference in tab settings). It gives also an overview of the percentage of amount spent depending on *Category* or *Tag* field (choose your preference in tab settings) through a pie chart.
