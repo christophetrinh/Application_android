@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -109,6 +110,31 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
+
+        Preference button = (Preference)findPreference(getString(R.string.remove_data));
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new AlertDialog.Builder(getContext(),R.style.DialogStyle)
+                        .setTitle("Delete Data")
+                        .setMessage("Are you sure you want to delete all data ?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                                mDbHelper.deleteAllExpense();
+                                updateFragment();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -669,26 +695,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 output.add(0, "Data retrieved using the Google Sheets API:");
                 System.out.println(TextUtils.join("\n", output));
                 // MAJ ALL TAB
-                List<Fragment> fragList = getFragmentManager().getFragments();
-                for(Fragment f: fragList) {
-                    if(f.getClass() == TabMap.class) {
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.detach(f).attach(f).commit();
-                    }
-                    if(f.getClass() == TabViz.class) {
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.detach(f).attach(f).commit();
-                    }
-                    if(f.getClass() == TabHome.class) {
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.detach(f).attach(f).commit();
-                    }
-                    if(f.getClass() == TabTable.class) {
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.detach(f).attach(f).commit();
-                    }
-                }
-
+                updateFragment();
             }
         }
 
@@ -711,6 +718,28 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 Log.e("SHEET API", "Request cancelled.");
             }
         }
+    }
 
+    public void updateFragment(){
+        // MAJ ALL TAB
+        List<Fragment> fragList = getFragmentManager().getFragments();
+        for(Fragment f: fragList) {
+            if(f.getClass() == TabMap.class) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(f).attach(f).commit();
+            }
+            if(f.getClass() == TabViz.class) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(f).attach(f).commit();
+            }
+            if(f.getClass() == TabHome.class) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(f).attach(f).commit();
+            }
+            if(f.getClass() == TabTable.class) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(f).attach(f).commit();
+            }
+        }
     }
 }

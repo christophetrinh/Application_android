@@ -21,4 +21,8 @@
         android:key="home_pie"
         android:title="Choose the pie visualisation in Home tab" />
 
+    <Preference
+        android:key="@string/remove_data"
+        android:title="@string/remove_data"/>
+
 </PreferenceScreen>

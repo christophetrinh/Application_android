@@ -34,5 +34,6 @@
 
 
     <string name="pref_sync">Synchronize to Google Drive</string>
+    <string name="remove_data">Clear all data</string>
 
 </resources>
