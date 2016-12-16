@@ -1,12 +1,9 @@
 package com.example.moneyapps;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.toolkit.LongPressAwareTableDataAdapter;
@@ -14,9 +11,6 @@ import com.example.moneyapps.data.Expense;
 
 import java.text.NumberFormat;
 import java.util.List;
-
-import static java.lang.String.format;
-
 
 public class ExpenseTableDataAdapter extends LongPressAwareTableDataAdapter<Expense> {
 
