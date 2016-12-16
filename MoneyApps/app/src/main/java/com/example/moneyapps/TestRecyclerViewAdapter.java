@@ -1,16 +1,10 @@
 package com.example.moneyapps;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import java.util.List;
-
-/**
- * Created by trinh on 12/11/16.
- */
 
 public class TestRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
