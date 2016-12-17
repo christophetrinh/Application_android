@@ -15,7 +15,8 @@ We opt for an interface which provides several swipe tabs in order to make intui
 
 A floating menu in the bottom right hand corner permits to the user to add an expense :
 - **Manually** : A new activity will appear with all fields empty. Thus, the user can manually enter the corresponding data into each field.
-- **Automatically** : A camera activity will appear in order to retrieve information directly from a receipt. Firstly, present a receipt in front of the camera, then the *date* and the *amount* should be detected and should appear on the display. If date and amount are detected, a form will automatically appear with the corresponding *amount* and *date*. If only one is detected, the user is free to click on the button *capture done*, if the detection has not detected both. Then the form will appear with the field detected filled. We also implement a geolocalisation, in a background process, which allows to detect your current location in order to fill the *place* field on the expense edit activity.
+- **Automatically** : A camera activity will appear in order to retrieve information directly from a receipt. Firstly, present a receipt in front of the camera, then the *date* and the *amount* should be detected and should appear on the display with a Toast message.Then the user has to click on the button *capture done*.
+The user is also free to click on it if only one is detected. Then the form will appear with the field(s) detected filled. We also implement a geolocalisation, in a background process, which allows to detect your current location in order to fill the *place* field on the expense edit activity.
 
 Information on each expense : 
  
