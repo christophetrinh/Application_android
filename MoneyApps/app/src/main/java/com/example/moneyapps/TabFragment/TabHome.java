@@ -66,7 +66,7 @@ public class TabHome extends Fragment {
     }
 
     public void updateDataPiechart() {
-
+        mDbHelper.open();
         List<ExpenseCategory> CategoryAmount = ExtractFromDataBase(mDbHelper);
         double sum = Totalsum(CategoryAmount);
         List<SliceValue> values = new ArrayList<SliceValue>();
@@ -79,8 +79,9 @@ public class TabHome extends Fragment {
         data = new PieChartData(values);
         data.setHasLabels(true);
         data.setHasCenterCircle(true);
-
         chart.setPieChartData(data);
+
+        mDbHelper.close();
     }
 
     public static double Totalsum(List<ExpenseCategory> CategoryAmount) {
@@ -177,7 +178,7 @@ public class TabHome extends Fragment {
         String amount;
         SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         String home_display = myPref.getString("home_choice","null");
-
+        mDbHelper.open();
         if (home_display.equals("Day")){
             sentence = "Today, you've spent : ";
         }
@@ -199,6 +200,7 @@ public class TabHome extends Fragment {
             amount = "0";
         }
         button_view.setText(sentence + amount + " €");
+        mDbHelper.close();
     }
 
 

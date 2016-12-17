@@ -3,8 +3,11 @@ package com.example.moneyapps.data;
 import android.database.Cursor;
 import com.example.moneyapps.DataBaseAdapter;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Demonstration of several expenses.
@@ -34,22 +37,33 @@ public final class DataExpenses {
 
     public static List<Expense> UpdateDataBaseExpenseList(DataBaseAdapter mDbHelper) {
         final List<Expense> Expenses = new ArrayList<>();
+        mDbHelper.open();
         Cursor expenseCursor = mDbHelper.fetchAllExpense();
+
+        NumberFormat nf = NumberFormat.getInstance(Locale.FRANCE);
+
         if (expenseCursor != null) {
             expenseCursor.moveToFirst();
             while(!expenseCursor.isAfterLast()) {
+                Number amount = null;
+                try {
+                    amount = nf.parse(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
                 Expenses.add(new Expense(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_ROWID)),
-                        expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_RETAIL)),
-                        expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_DATE)),
-                        expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_PLACE)),
-                        expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_CATOGORY)),
-                        expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_TAG)),
-                        Double.parseDouble(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT)))));
+                            expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_RETAIL)),
+                            expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_DATE)),
+                            expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_PLACE)),
+                            expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_CATOGORY)),
+                            expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_TAG)),
+                            amount.doubleValue()));
 
                 expenseCursor.moveToNext();
             }
         }
+        mDbHelper.close();
         return Expenses;
     }
 

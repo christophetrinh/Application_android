@@ -202,6 +202,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void debugDatabase() {
+        mDbHelper.open();
         Cursor expenseCursor = mDbHelper.fetchAllExpense();
         if (expenseCursor != null) {
             // Print
@@ -218,6 +219,7 @@ public class MainActivity extends ActionBarActivity {
                 expenseCursor.moveToNext();
             }
         }
+        mDbHelper.close();
     }
 
     private void toggleLogo(final Drawable newLogo, final int newColor, int duration) {

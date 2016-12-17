@@ -121,7 +121,9 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // continue with delete
+                                mDbHelper.open();
                                 mDbHelper.deleteAllExpense();
+                                mDbHelper.close();
                                 updateFragment();
                             }
                         })
@@ -588,6 +590,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         private List<String> getDataFromApi() throws IOException {
             List<String> results = new ArrayList<String>();
             // LINK TO THE DATABASE
+            mDbHelper.open();
             mDbHelper.deleteAllExpense();
 
             ValueRange response = this.mService.spreadsheets().values()
@@ -604,6 +607,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 }
             }
             display_msg("Data retrieved");
+            mDbHelper.close();
             return results;
         }
 
@@ -648,6 +652,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
         @TargetApi(Build.VERSION_CODES.N)
         public List<List<Object>> setData ()  {
+            mDbHelper.open();
             // Describe Row
             List<List<Object>> data = new ArrayList<List<Object>>();
             List<Object> dataTitle = new ArrayList<Object>();
@@ -677,6 +682,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                     expenseCursor.moveToNext();
                 }
             }
+            mDbHelper.close();
             return data;
         }
 

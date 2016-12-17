@@ -64,6 +64,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
     public static List<ExpenseMap> ExtractFromDataBase(DataBaseAdapter mDb) {
         // Groupby place and sum amount
         // Return array list of class ExpenseMap
+        mDb.open();
         final List<ExpenseMap> PlaceAmount = new ArrayList<>();
         Cursor dataCursor = mDb.groupbyPlace();
         debugDatabase(dataCursor); // Print result
@@ -77,6 +78,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
                 dataCursor.moveToNext();
             }
         }
+        mDb.close();
         return PlaceAmount;
     }
 
@@ -125,7 +127,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
 
     private void setUpMap(GoogleMap map) {
         mMap = map;
-
+        mDbHelper.open();
         // Extract data from database
         List<ExpenseMap> PlaceAmount = ExtractFromDataBase(this.mDbHelper);
         // Search from a city name
@@ -135,6 +137,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
                 geocodeAddress(PlaceAmount.get(i).getPlace(), PlaceAmount.get(i).getAmount(), geocode, mMap);
             }
         }
+        mDbHelper.close();
     }
 
     @Override

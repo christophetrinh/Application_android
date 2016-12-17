@@ -138,13 +138,13 @@ public class DataBaseAdapter {
                 null);  // The sort order
     }
 
-    public Cursor groupbyMonth() {
+    public Cursor groupbyMonth(int year) {
         return mDb.query(
                 DATABASE_TABLE, // The table to query
-                new String[]{KEY_DATE_YEAR,KEY_DATE_MONTH,"SUM("+KEY_AMOUNT+")"},   // The columns to return
-                null,   // The columns for the WHERE clause
-                null,   // The values for the WHERE clause
-                "CAST("+KEY_DATE_YEAR+" AS VARCHAR(4) )+'.'+CAST("+KEY_DATE_MONTH+" AS VARCHAR(2))",
+                new String[]{KEY_DATE_MONTH,"SUM("+KEY_AMOUNT+")"},   // The columns to return
+                KEY_DATE_YEAR+"=?",   // The columns for the WHERE clause
+                new String[]{String.valueOf(year)},   // The values for the WHERE clause
+                KEY_DATE_MONTH,
                 null,   // don't filter by row groups
                 null);  // The sort order
     }
@@ -279,8 +279,8 @@ public class DataBaseAdapter {
             mCursor = mDb.query(
                     DATABASE_TABLE, // The table to query
                     new String[]{KEY_DATE_MONTH,"SUM("+KEY_AMOUNT+")"},   // The columns to return
-                    null,   // The columns for the WHERE clause
-                    null,   // The values for the WHERE clause
+                    KEY_DATE_YEAR+"=?",   // The columns for the WHERE clause
+                    new String[]{new SimpleDateFormat("yyyy").format(new Date())},   // The values for the WHERE clause
                     KEY_DATE_MONTH,
                     null,   // don't filter by row groups
                     null);  // The sort order

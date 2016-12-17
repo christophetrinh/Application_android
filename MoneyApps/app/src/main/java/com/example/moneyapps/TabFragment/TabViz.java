@@ -61,9 +61,9 @@ public class TabViz extends Fragment {
 
         // *** BOTTOM COLUMN CHART ***
         chartBottom = (ColumnChartView) rootView.findViewById(R.id.chart_bottom);
-
+        mDbHelper.open();
         updateColumnData(this.mDbHelper);
-
+        mDbHelper.close();
         return rootView;
     }
 
@@ -80,7 +80,6 @@ public class TabViz extends Fragment {
             int i = 0;
             dataCursor.moveToFirst();
             while (!dataCursor.isAfterLast()) {
-
                 values = new ArrayList<SubcolumnValue>();
                 values.add(new SubcolumnValue(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) , ChartUtils.pickColor()));
                 axisValues.add(new AxisValue(i).setLabel(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))));
@@ -148,6 +147,7 @@ public class TabViz extends Fragment {
 
     private void updateLineData(int columnIndex, int color, boolean flag) {
         int max = Max_ChartTop;
+        mDbHelper.open();
         // Cancel last animation if not finished.
         chartTop.cancelDataAnimation();
 
@@ -163,18 +163,20 @@ public class TabViz extends Fragment {
 
         if(flag) {
             // Retrieve amount by month
-            Cursor dataCursor = this.mDbHelper.groupbyMonth();
+            Cursor dataCursor = this.mDbHelper.groupbyMonth(this.years.get(columnIndex));
             if (dataCursor != null) {
                 dataCursor.moveToFirst();
                 while (!dataCursor.isAfterLast()) {
-                    if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) == this.years.get(columnIndex)) {                    System.out.println(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))));
                         //Retrieve month info
-                        PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1);
-                        value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))) - 1,
-                                dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2))));
-                        if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2)))>max)
-                            max = dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(2)));
-                    }
+                        System.out.println(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))+","
+                                +dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))));
+
+                        PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) - 1);
+                        value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) - 1,
+                                dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))));
+                        if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))>max)
+                            max = dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)));
+
                     dataCursor.moveToNext();
                 }
             }
@@ -186,6 +188,7 @@ public class TabViz extends Fragment {
 
         // Start new data animation with 300ms duration;
         chartTop.startDataAnimation(300);
+        mDbHelper.close();
     }
 
     private class ValueTouchListener implements ColumnChartOnValueSelectListener {
@@ -205,7 +208,9 @@ public class TabViz extends Fragment {
     public void onResume() {
         super.onResume();
         generateInitialLineData();
+        mDbHelper.open();
         updateColumnData(this.mDbHelper);
+        mDbHelper.close();
     }
 
     @Override

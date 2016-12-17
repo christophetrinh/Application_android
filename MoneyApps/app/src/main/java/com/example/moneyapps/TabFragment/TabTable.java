@@ -48,6 +48,7 @@ public class TabTable extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.table_view, container, false);
+        mDbHelper.open();
         expenseTableView = (SortableExpenseTableView) view.findViewById(R.id.tableView);
         if (expenseTableView != null) {
             expenseTableDataAdapter = new ExpenseTableDataAdapter(getContext(), DataExpenses.UpdateDataBaseExpenseList(mDbHelper), expenseTableView);
@@ -62,7 +63,9 @@ public class TabTable extends Fragment {
                         public void run() {
                             // UPDATE
                             expenseTableDataAdapter.getData().clear();
+                            mDbHelper.open();
                             expenseTableDataAdapter.getData().addAll(DataExpenses.UpdateDataBaseExpenseList(mDbHelper));
+                            mDbHelper.close();
                             expenseTableDataAdapter.notifyDataSetChanged();
                             refreshIndicator.hide();
                             Toast.makeText(getContext(), "Refresh", Toast.LENGTH_SHORT).show();
@@ -71,21 +74,26 @@ public class TabTable extends Fragment {
                 }
             });
         }
+        mDbHelper.close();
         return view;
     }
 
     public void onResume() {
         super.onResume();
         // UPDATE TABLE
+        mDbHelper.open();
         expenseTableDataAdapter.getData().clear();
         expenseTableDataAdapter.getData().addAll(DataExpenses.UpdateDataBaseExpenseList(mDbHelper));
+        mDbHelper.close();
     }
 
     public void update(DataBaseAdapter mDbHelper) {
         // UPDATE TABLE
+        mDbHelper.open();
         expenseTableDataAdapter.getData().clear();
         expenseTableDataAdapter.getData().addAll(DataExpenses.UpdateDataBaseExpenseList(mDbHelper));
         this.mDbHelper=mDbHelper;
+        mDbHelper.close();
     }
 
 

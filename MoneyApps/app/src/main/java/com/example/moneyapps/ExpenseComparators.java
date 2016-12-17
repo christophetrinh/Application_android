@@ -4,7 +4,11 @@ package com.example.moneyapps;
  * Created by mario on 25/11/2016.
  */
 import com.example.moneyapps.data.Expense;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 
 public class ExpenseComparators {
 
@@ -41,7 +45,16 @@ public class ExpenseComparators {
 
         @Override
         public int compare(final Expense expense1, final Expense expense2) {
-            return expense1.getDate().compareTo(expense2.getDate());
+            Date expense1_date = null;
+            Date expense2_date = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                expense1_date = sdf.parse(expense1.getDate());
+                expense2_date = sdf.parse(expense2.getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return expense1_date.compareTo(expense2_date);
         }
     }
     private static class ExpensePlaceComparator implements Comparator<Expense> {
