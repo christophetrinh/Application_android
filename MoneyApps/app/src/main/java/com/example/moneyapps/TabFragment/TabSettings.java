@@ -61,9 +61,12 @@ import com.google.api.services.sheets.v4.model.UpdateCellsRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -592,6 +595,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
             // LINK TO THE DATABASE
             mDbHelper.open();
             mDbHelper.deleteAllExpense();
+            NumberFormat nf = NumberFormat.getInstance(Locale.FRANCE);
 
             ValueRange response = this.mService.spreadsheets().values()
                     .get(spreadsheetId, range_read)
@@ -599,11 +603,17 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
             List<List<Object>> values = response.getValues();
             if (values != null) {
                 for (List row : values) {
+                    Number amount = null;
+                    try {
+                        amount = nf.parse(row.get(5).toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     results.add(row.get(0) + "\t" + row.get(1)+ "\t" + row.get(2)+"\t" + row.get(3)+
                             "\t" + row.get(4)+ "\t" + row.get(5)+ "\t");
 
                     mDbHelper.createExpense(row.get(0).toString(), row.get(1).toString(),row.get(2).toString(),
-                            row.get(5).toString(),row.get(3).toString(), row.get(4).toString());
+                            amount.doubleValue(),row.get(3).toString(), row.get(4).toString());
                 }
             }
             display_msg("Data retrieved");
@@ -676,7 +686,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_PLACE)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_CATOGORY)));
                     dataRow.add(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_TAG)));
-                    dataRow.add(Double.parseDouble(expenseCursor.getString(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT))));
+                    dataRow.add(expenseCursor.getDouble(expenseCursor.getColumnIndexOrThrow(mDbHelper.KEY_AMOUNT)));
 
                     data.add(dataRow);
                     expenseCursor.moveToNext();

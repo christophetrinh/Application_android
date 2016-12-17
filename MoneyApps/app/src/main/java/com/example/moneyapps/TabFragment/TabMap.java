@@ -73,7 +73,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
             while (!dataCursor.isAfterLast()) {
 
                 PlaceAmount.add(new ExpenseMap(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))),
-                        Double.parseDouble(dataCursor.getString(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))))));
+                        dataCursor.getDouble(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))));
 
                 dataCursor.moveToNext();
             }
@@ -203,7 +203,7 @@ public class TabMap extends Fragment implements OnMapReadyCallback {
             try {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .title( addressStr + " : " + String.valueOf(amount) + " €"));
+                        .title( addressStr + " : " + String.format( "%.2f", amount) + " €"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(latitude, longitude), 10));
             } catch (Exception e) {

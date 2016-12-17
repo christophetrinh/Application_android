@@ -168,14 +168,11 @@ public class TabViz extends Fragment {
                 dataCursor.moveToFirst();
                 while (!dataCursor.isAfterLast()) {
                         //Retrieve month info
-                        System.out.println(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0)))+","
-                                +dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))));
-
                         PointValue value = values.get(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) - 1);
                         value.setTarget(dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(0))) - 1,
-                                dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))));
-                        if (dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))>max)
-                            max = dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)));
+                                (float) dataCursor.getDouble(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1))));
+                        if (dataCursor.getDouble(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))>max)
+                            max = dataCursor.getInt(dataCursor.getColumnIndexOrThrow(dataCursor.getColumnName(1)))+Max_ChartTop;
 
                     dataCursor.moveToNext();
                 }

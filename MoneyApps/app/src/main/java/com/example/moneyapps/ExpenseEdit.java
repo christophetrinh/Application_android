@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +54,6 @@ public class ExpenseEdit extends Activity {
     public Long mRowId;
 
     private Button mConfirmButton;
-    private LocationManager locationManager;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,15 +133,23 @@ public class ExpenseEdit extends Activity {
     private void saveState() {
         String retail = mRetailText.getText().toString();
         String place = mPlaceText.getText().toString();
-        String amount = mAmountText.getText().toString();
+        String amount_str = mAmountText.getText().toString();
         String category = mCategoryText.getText().toString();
         String tag = mTagText.getText().toString();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FINAL_FORMAT);
         String expenseDate = dateFormat.format(mCalendar.getTime());
+        NumberFormat nf = NumberFormat.getInstance(Locale.FRANCE);
+        Number amount = null;
+        try {
+            amount = nf.parse(amount_str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         if (mRowId == null) {
             mDbHelper.open();
-            long id = mDbHelper.createExpense(retail, expenseDate, capitalize(place), amount, category, tag);
+            long id = mDbHelper.createExpense(retail, expenseDate, capitalize(place), amount.doubleValue(), category, tag);
             mDbHelper.close();
             if (id > 0) {
                 mRowId = id;
@@ -149,7 +157,7 @@ public class ExpenseEdit extends Activity {
             }
         } else {
             mDbHelper.open();
-            mDbHelper.updateExpense(mRowId, retail, expenseDate, capitalize(place), amount, category, tag);
+            mDbHelper.updateExpense(mRowId, retail, expenseDate, capitalize(place), amount.doubleValue(), category, tag);
             mDbHelper.close();
         }
     }

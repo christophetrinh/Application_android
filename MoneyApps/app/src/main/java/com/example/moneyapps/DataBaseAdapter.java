@@ -39,7 +39,7 @@ public class DataBaseAdapter {
                     + KEY_DATE_MONTH + " integer, "
                     + KEY_DATE_YEAR + " integer, "
                     + KEY_PLACE + " text not null, "
-                    + KEY_AMOUNT + " text not null, "
+                    + KEY_AMOUNT + " real, "
                     + KEY_CATOGORY + " text not null, "
                     + KEY_TAG + " text not null);";
 
@@ -75,8 +75,9 @@ public class DataBaseAdapter {
         mDbHelper.close();
     }
 
-    public long createExpense(String retail, String date, String place, String amount, String category, String tag) {
+    public long createExpense(String retail, String date, String place, double amount, String category, String tag) {
         ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_AMOUNT, amount);
         if (retail.isEmpty()){
             initialValues.put(KEY_RETAIL, "Empty");}
         else
@@ -97,10 +98,6 @@ public class DataBaseAdapter {
             initialValues.put(KEY_PLACE, "Empty");
         else
             initialValues.put(KEY_PLACE, capitalize(place));
-        if (amount.isEmpty())
-            initialValues.put(KEY_AMOUNT, "0");
-        else
-            initialValues.put(KEY_AMOUNT, amount);
         if (category.isEmpty())
             initialValues.put(KEY_CATOGORY, "Empty");
         else
@@ -222,7 +219,7 @@ public class DataBaseAdapter {
                 null);  // The sort order
     }
 
-    public boolean updateExpense(long rowId, String retail, String date, String place, String amount, String category, String tag) {
+    public boolean updateExpense(long rowId, String retail, String date, String place, double amount, String category, String tag) {
         ContentValues args = new ContentValues();
         args.put(KEY_RETAIL, retail);
         args.put(KEY_DATE, date);
@@ -251,8 +248,8 @@ public class DataBaseAdapter {
         return Integer.parseInt(Date[2]);
     }
 
-    public String getAmount(String period) {
-        String Amount = new String();
+    public double getAmount(String period) {
+        double Amount = 0;
         Cursor mCursor = null;
         String current_date = new String();
 
@@ -327,7 +324,7 @@ public class DataBaseAdapter {
 
                 String date_cursor = String.format("%02d", mCursor.getInt(mCursor.getColumnIndexOrThrow(mCursor.getColumnName(0))));
                 if (date_cursor.equals(current_date)){
-                    Amount = mCursor.getString(mCursor.getColumnIndexOrThrow(mCursor.getColumnName(1)));
+                    Amount = mCursor.getDouble(mCursor.getColumnIndexOrThrow(mCursor.getColumnName(1)));
                     break;
                 }
                 mCursor.moveToNext();

@@ -175,7 +175,7 @@ public class TabHome extends Fragment {
 
     public void updateAmount() {
         String sentence;
-        String amount;
+        double amount;
         SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         String home_display = myPref.getString("home_choice","null");
         mDbHelper.open();
@@ -192,14 +192,11 @@ public class TabHome extends Fragment {
         }
 
         else { //default case
-            sentence = "This month, you've spent: ";
+            sentence = "This month, you've spent : ";
         }
 
         amount = mDbHelper.getAmount(home_display);
-        if (amount.isEmpty()){
-            amount = "0";
-        }
-        button_view.setText(sentence + amount + " €");
+        button_view.setText(sentence + String.format( "%.2f", amount) + " €");
         mDbHelper.close();
     }
 
