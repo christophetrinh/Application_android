@@ -38,7 +38,7 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
 
             String date_value;
             //Retrieve the date in the format dd/mm/yy
-            if (item != null && item.getValue().contains("/")) {
+            if (item != null && item.getValue().contains("/") && !date_detected) {
                 raw = item.getValue();
                 String[] token = raw.split(" ");
                 for (int j = 0; j < token.length; j++) {
@@ -62,7 +62,7 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
             }
 
             // Retrieve the amount
-            if (item != null && item.getValue() != null) {
+            if (item != null && item.getValue() != null && !amount_detected) {
                 raw = item.getValue();
                 String[] token = raw.split(" ");
                 String value;
@@ -89,15 +89,6 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
 
         }
 
-        if (amount_detected && date_detected) {
-
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ((TakePicture) mActivity).updatebool(true);
-                }
-            });
-        }
     }
 
     public static boolean isDate(String str) {

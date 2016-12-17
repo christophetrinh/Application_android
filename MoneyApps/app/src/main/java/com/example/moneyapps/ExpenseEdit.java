@@ -54,7 +54,6 @@ public class ExpenseEdit extends Activity {
     public Long mRowId;
 
     private Button mConfirmButton;
-    private LocationManager locationManager;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(Bundle savedInstanceState) {
