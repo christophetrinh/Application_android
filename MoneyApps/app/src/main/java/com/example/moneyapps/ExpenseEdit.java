@@ -140,7 +140,7 @@ public class ExpenseEdit extends Activity {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FINAL_FORMAT);
         String expenseDate = dateFormat.format(mCalendar.getTime());
         NumberFormat nf = NumberFormat.getInstance(Locale.FRANCE);
-        Number amount = null;
+        Number amount = 0;
         try {
             amount = nf.parse(amount_str);
         } catch (ParseException e) {

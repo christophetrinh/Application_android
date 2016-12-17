@@ -478,7 +478,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
         @Override
         protected void onPostExecute(List<String> output) {
             if (output == null || output.size() == 0) {
-                display_msg("No results returned.");
+                display_msg("Spreadsheet empty");
             } else {
                 //TODO REMOVE ?
                 output.add(0, "Data retrieved using the Drive API:");
@@ -652,7 +652,6 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                         mService.spreadsheets().values().batchUpdate(spreadsheetId, oRequest_update).execute();
 
                 flag = true;
-                display_msg("Data saved");
             } catch (IOException e) {
                 display_msg("Sheets failed");
                 Log.v("Sheets failed", String.valueOf(e));
@@ -698,7 +697,7 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
 
         @Override
         protected void onPreExecute() {
-            display_msg("Calling Google Sheets API ...");
+            Log.e("SHEET API","Calling Google Sheets API ...");
         }
 
 
@@ -710,6 +709,10 @@ public class TabSettings extends PreferenceFragment implements SharedPreferences
                 // TODO REMOVE ?
                 output.add(0, "Data retrieved using the Google Sheets API:");
                 System.out.println(TextUtils.join("\n", output));
+                if (!Retrieve_Save)
+                    display_msg("Data retrieved");
+                else
+                    display_msg("Data saved");
                 // MAJ ALL TAB
                 updateFragment();
             }

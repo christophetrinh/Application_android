@@ -3,11 +3,8 @@ package com.example.moneyapps.data;
 import android.database.Cursor;
 import com.example.moneyapps.DataBaseAdapter;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Demonstration of several expenses.
