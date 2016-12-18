@@ -7,7 +7,7 @@ This Android application enables user to track his expenses all around the world
 
 ### Implementation
 
-We will use several library, for instance OCR library by [Mobile Vision](https://developers.google.com/vision/) in order to extract information on the receipt. Moreover, we give the possibility to the user to fill the form manually. We add also a location based service with a map that shows the expenses on each country. Additionnaly, the user can synchronize his google account in order to retrieve or store the data expenses in a spreadsheet.
+We will use several library, for instance OCR library by [Mobile Vision](https://developers.google.com/vision/) in order to extract information from the receipt. Moreover, we give the possibility to the user to fill the form manually. We add also a location based service with a map that shows the expenses on each country. Additionnaly, the user can synchronize his google account in order to retrieve or store the data expenses in a spreadsheet.
 
 ### Interface descritpion
 
