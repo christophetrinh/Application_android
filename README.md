@@ -38,10 +38,11 @@ The application provides the following tabs :
 
 ## Example 
 
-Before any execution, we need to give you access to the Google API, please follow the step below in order to use the Google account feature :
+Before any execution, we need to give you access to the Google API, please follow the step below in order to use the Google account feature :  
 We need to authorize your SHA1 fingerprint on the Google API.
 
 - Firstly retrieve your SHA1 :
+
 1. Open Android Studio
 2. Open your Project
 3. Click on Gradle (From Right Side Panel, you will see Gradle Bar)
