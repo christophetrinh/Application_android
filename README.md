@@ -38,6 +38,25 @@ The application provides the following tabs :
 
 ## Example 
 
+Before any execution, we need to give you access to the Google API, please follow the step below in order to use the Google account feature :
+We need to authorize your SHA1 fingerprint on the Google API.
+
+- Firstly retrieve your SHA1 :
+1. Open Android Studio
+2. Open your Project
+3. Click on Gradle (From Right Side Panel, you will see Gradle Bar)
+4. Click on Refresh (Click on Refresh from Gradle Bar, you will see List Gradle scripts of your Project)
+5. Click on Your Project (Your Project Name form List (root))
+6. Click on Tasks
+7. Click on Android
+8. Double Click on signingReport (You will get SHA1 and MD5 in Run Bar)
+
+*As shown on the screenshot below :*
+
+![GUFbd.png](https://i.stack.imgur.com/GUFbd.png)
+
+- Then send us your SHA1 by email : <mario.viola@epfl.ch>.
+
 In order to test the application, you can add [this spreadsheet](https://docs.google.com/spreadsheets/d/1DkZDt4gOWuzHNH0oxkb8jx-i4B2_tQshF_dHFFPJHZc/edit?usp=sharing) to your Google Drive account by open it and click on *File* and *Add to My Drive*. To retrieve the data to the application, run the application, go on the tab *Settings* and click on *Synchronize to Google Drive*. Then, configure your Google account and select the spreadsheet given below called *MoneyApps* and choose *Retrieve the data*.
 
 You can also try to add an expense manually or even automatically. We provide below a typical receipt that you can scan with your device, you can directly scan it on a display, no need to print it.
