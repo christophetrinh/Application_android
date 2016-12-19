@@ -3,7 +3,7 @@
 ### Introduction
 
 Manage your money expenses in a better way with MoneyApps!
-This Android application enables user to track his expenses all around the world by scanning receipt. Simple and intuitive, Money App provides responsive data visualization by filtering annual/monthly/daily expenses. Additionally, it displays a table grouping all expenses by tag or category. The application is made with a particular attention to provides a simple, intuitive and efficient way to manage expenses.
+This Android application enables user to track his expenses all around the world by scanning receipt. Simple and intuitive, Money App provides responsive data visualization by filtering annually/monthly/daily expenses. Additionally, it displays a table grouping all expenses by tag or category. The application is made with a particular attention to provides a simple, intuitive and efficient way to manage expenses.
 
 ### Implementation
 
